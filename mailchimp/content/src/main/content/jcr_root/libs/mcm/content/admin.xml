@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:mixinTypes="[cq:Console]"
+    jcr:primaryType="cq:Widget"
+    jcr:title="AEM MCM"
+    sling:redirect="{Boolean}false"
+    sling:resourceType="cq/ui/components/widget"
+    sling:vanityOrder="{Long}280"
+    sling:vanityPath="/mcmadmin"
+    consoleDescription="Manage your marketing campaigns."
+    consoleTitle="Campaigns"
+    iconClass="mcmadmin"
+    id="cq-mcmadmin"
+    jsLibs="[cq.mcm,personalization,cq.collab.socialfeed]"
+    xtype="mcmadmin">
+    <deck jcr:primaryType="nt:unstructured"/>
+    <items jcr:primaryType="cq:WidgetCollection">
+        <dashboard
+            jcr:primaryType="cq:Widget"
+            id="dashboard"
+            name="dashboard"
+            title="Dashboard"
+            xtype="mcmdashboard"/>
+        <users
+            jcr:primaryType="cq:Widget"
+            comment="Deprecated - please use Adobe Campaign instead, as of AEM 6.1 (CQ-33156)"
+            id="usersPanel"
+            name="users"
+            title="Leads"
+            xtype="securityauthorizablespanel">
+            <quickViewRows jcr:primaryType="cq:WidgetCollection">
+                <picture
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="picture"/>
+                <name
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="name"
+                    xssProtect="true"/>
+                <address
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="address"
+                    xssProtect="true"/>
+                <birthday
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="birthday"/>
+                <gender
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="gender"/>
+                <created
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="created"/>
+                <lastModified
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="lastModified"/>
+                <description
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="description"
+                    xssProtect="true"/>
+                <memberships
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="memberships"
+                    xssKeepPropName="true"
+                    xssProtect="true"/>
+            </quickViewRows>
+            <gridConfig
+                jcr:primaryType="cq:Widget"
+                id="usersGrid"
+                storeReaderFields="[id,name_xss,givenName_xss,familyName_xss,email,email_xss,picturePath,pictureExt,pictureMod,replication]"
+                xtype="securitygrid">
+                <searchField jcr:primaryType="nt:unstructured"/>
+                <helpButton jcr:primaryType="nt:unstructured"/>
+                <pagingToolbarCfg
+                    jcr:primaryType="cq:Widget"
+                    displayMsg=" {2} Leads"
+                    maxMsg="Thousands of Leads"/>
+                <queryCfg
+                    jcr:primaryType="nt:unstructured"
+                    category="mcm"
+                    selector="user"/>
+                <columns jcr:primaryType="cq:WidgetCollection">
+                    <pic
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="picture"/>
+                    <id
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="id"/>
+                    <name
+                        jcr:primaryType="nt:unstructured"
+                        hidden="true"
+                        renderer="function(val, meta, rec) { return CQ.shared.XSS.xssPropertyRenderer(val, meta, rec, this); }"
+                        usePredefined="name"/>
+                    <givenName
+                        jcr:primaryType="nt:unstructured"
+                        renderer="function(val, meta, rec) { return CQ.shared.XSS.xssPropertyRenderer(val, meta, rec, this); }"
+                        usePredefined="givenName"/>
+                    <familyName
+                        jcr:primaryType="nt:unstructured"
+                        renderer="function(val, meta, rec) { return CQ.shared.XSS.xssPropertyRenderer(val, meta, rec, this); }"
+                        usePredefined="familyName"/>
+                    <email
+                        jcr:primaryType="nt:unstructured"
+                        renderer="function(val, meta, rec) { return CQ.shared.XSS.xssPropertyRenderer(val, meta, rec, this); }"
+                        usePredefined="email"/>
+                    <published
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="published"/>
+                </columns>
+                <actions jcr:primaryType="nt:unstructured">
+                    <create
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-users-create"
+                        handler="function(){CQ.security.SecurityAdmin.createUser();}"
+                        isDefaultAction="{Boolean}true"
+                        text="New..."/>
+                    <separator0
+                        jcr:primaryType="nt:unstructured"
+                        value="-"
+                        xtype="separator"/>
+                    <edit
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-users-edit"
+                        conditions="[CQ.security.SecurityAdmin.hasSingleUserSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.editUser();}"
+                        target="CQ.security.SecurityAdmin.getUsersTarget"
+                        text="Edit..."/>
+                    <delete
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-users-delete"
+                        conditions="[CQ.security.SecurityAdmin.hasUsersSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.deleteUsers();}"
+                        privileges="[replicate]"
+                        target="CQ.security.SecurityAdmin.getUsersTarget"
+                        text="Delete"/>
+                    <separator1
+                        jcr:primaryType="nt:unstructured"
+                        value="-"
+                        xtype="separator"/>
+                    <activate
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-users-activate"
+                        conditions="[CQ.security.SecurityAdmin.hasUsersSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.activateUsers();}"
+                        privileges="[replicate]"
+                        target="CQ.security.SecurityAdmin.getUsersTarget"
+                        text="Activate"/>
+                    <deactivate
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-users-deactivate"
+                        conditions="[CQ.security.SecurityAdmin.hasUsersSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.deactivateUsers();}"
+                        privileges="[replicate]"
+                        target="CQ.security.SecurityAdmin.getUsersTarget"
+                        text="Deactivate"/>
+                    <separator2
+                        jcr:primaryType="nt:unstructured"
+                        value="-"
+                        xtype="separator"/>
+                    <tools
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-tools"
+                        context="[toolbar,contextmenu]"
+                        iconCls="cq-siteadmin-tools-icon"
+                        text="Tools">
+                        <menu jcr:primaryType="nt:unstructured">
+                            <addToGroup
+                                jcr:primaryType="nt:unstructured"
+                                cls="cq-security-addtogroup"
+                                conditions="[CQ.security.SecurityAdmin.hasUsersSelection]"
+                                handler="function(){CQ.security.SecurityAdmin.addUsers();}"
+                                target="CQ.security.SecurityAdmin.getUsersTarget"
+                                text="Add to List..."/>
+                            <import
+                                jcr:primaryType="nt:unstructured"
+                                cls="cq-security-users-import"
+                                handler="function(){CQ.mcm.MCMAdmin.importCSV();}"
+                                text="Import Leads..."/>
+                        </menu>
+                    </tools>
+                </actions>
+            </gridConfig>
+        </users>
+        <groups
+            jcr:primaryType="cq:Widget"
+            comment="Deprecated - please use Adobe Campaign instead, as of AEM 6.1 (CQ-33156)"
+            id="groupsPanel"
+            name="groups"
+            title="Lists"
+            xtype="securityauthorizablespanel">
+            <quickViewRows jcr:primaryType="cq:WidgetCollection">
+                <name
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="name"
+                    xssProtect="true"/>
+                <createdBy
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="createdBy"/>
+                <created
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="created"/>
+                <members
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="members"/>
+                <description
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="description"
+                    xssProtect="true"/>
+                <memberships
+                    jcr:primaryType="nt:unstructured"
+                    usePredefined="membershipsForGroups"
+                    xssKeepPropName="true"
+                    xssProtect="true"/>
+            </quickViewRows>
+            <gridConfig
+                jcr:primaryType="cq:Widget"
+                id="groupsGrid"
+                storeReaderFields="[name,name_xss,membersTotal,memberOfTotal,aboutMe,aboutMe_xss,replication]"
+                xtype="securitygrid">
+                <searchField jcr:primaryType="nt:unstructured"/>
+                <helpButton jcr:primaryType="nt:unstructured"/>
+                <pagingToolbarCfg
+                    jcr:primaryType="nt:unstructured"
+                    displayMsg=" {2} Lists"
+                    maxMsg="Thousands of Lists"/>
+                <queryCfg
+                    jcr:primaryType="nt:unstructured"
+                    category="mcm"
+                    selector="group"/>
+                <columns jcr:primaryType="cq:WidgetCollection">
+                    <groupName
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="groupName"
+                        xssProtect="true"/>
+                    <membersTotal
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="membersTotal"/>
+                    <membershipsTotal
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="membershipsTotal"/>
+                    <aboutMe
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="aboutMe"
+                        xssProtect="true"/>
+                    <published
+                        jcr:primaryType="nt:unstructured"
+                        usePredefined="published"/>
+                </columns>
+                <actions jcr:primaryType="nt:unstructured">
+                    <create
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-groups-create"
+                        context="[toolbar]"
+                        handler="function(){CQ.security.SecurityAdmin.createGroup();}"
+                        text="New..."/>
+                    <separator0
+                        jcr:primaryType="nt:unstructured"
+                        value="-"
+                        xtype="separator"/>
+                    <edit
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-groups-edit"
+                        conditions="[CQ.security.SecurityAdmin.hasSingleGroupSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.editGroup();}"
+                        target="CQ.security.SecurityAdmin.getGroupsTarget"
+                        text="Edit..."/>
+                    <delete
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-groups-delete"
+                        conditions="[CQ.security.SecurityAdmin.hasGroupsSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.deleteGroups();}"
+                        privileges="[replicate]"
+                        target="CQ.security.SecurityAdmin.getGroupsTarget"
+                        text="Delete"/>
+                    <separator1
+                        jcr:primaryType="nt:unstructured"
+                        value="-"
+                        xtype="separator"/>
+                    <activate
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-groups-activate"
+                        conditions="[CQ.security.SecurityAdmin.hasGroupsSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.activateGroups();}"
+                        privileges="[replicate]"
+                        target="CQ.security.SecurityAdmin.getGroupsTarget"
+                        text="Activate"/>
+                    <deactivate
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-groups-deactivate"
+                        conditions="[CQ.security.SecurityAdmin.hasGroupsSelection]"
+                        context="[toolbar,contextmenu]"
+                        handler="function(){CQ.security.SecurityAdmin.deactivateGroups();}"
+                        privileges="[replicate]"
+                        target="CQ.security.SecurityAdmin.getGroupsTarget"
+                        text="Deactivate"/>
+                    <separator2
+                        jcr:primaryType="nt:unstructured"
+                        value="-"
+                        xtype="separator"/>
+                    <tools
+                        jcr:primaryType="nt:unstructured"
+                        cls="cq-security-tools"
+                        context="[toolbar,contextmenu]"
+                        iconCls="cq-siteadmin-tools-icon"
+                        text="Tools">
+                        <menu jcr:primaryType="nt:unstructured">
+                            <members
+                                jcr:primaryType="nt:unstructured"
+                                cls="cq-security-members"
+                                conditions="[CQ.security.SecurityAdmin.hasSingleGroupSelection]"
+                                handler="function(){CQ.security.SecurityAdmin.showMembers();}"
+                                target="CQ.security.SecurityAdmin.getGroupsTarget"
+                                text="Show Leads..."/>
+                            <mergeGroup
+                                jcr:primaryType="nt:unstructured"
+                                cls="cq-security-mergegroup"
+                                conditions="[CQ.security.SecurityAdmin.hasSingleGroupSelection]"
+                                handler="function(){CQ.security.SecurityAdmin.mergeGroup();}"
+                                target="CQ.security.SecurityAdmin.getGroupsTarget"
+                                text="Merge Lists..."/>
+                            <sendNewsletter
+                                jcr:primaryType="nt:unstructured"
+                                cls="cq-security-addtogroup"
+                                conditions="[CQ.security.SecurityAdmin.hasSingleGroupSelection]"
+                                handler="function(){CQ.mcm.MCMAdmin.sendNewsletter();}"
+                                target="CQ.security.SecurityAdmin.getGroupsTarget"
+                                text="Send Newsletter..."/>
+                            <import
+                                jcr:primaryType="nt:unstructured"
+                                cls="cq-security-users-import"
+                                handler="function(){CQ.mcm.MCMAdmin.importCSV();}"
+                                text="Import Leads..."/>
+                        </menu>
+                    </tools>
+                </actions>
+            </gridConfig>
+        </groups>
+        <campaigns
+            jcr:primaryType="cq:Widget"
+            nonLeaf="{Boolean}true"
+            title="Campaigns"
+            xtype="mcmcampaignspanel"/>
+        <mailChimpDashboard
+            jcr:primaryType="cq:Widget"
+            id="mcdashboard"
+            name="mcdashboard"
+            title="Mail Chimp Dashboard"
+            xtype="mailchimpDashboard"/>
+    </items>
+    <tags jcr:primaryType="nt:unstructured">
+        <icon1
+            jcr:primaryType="nt:unstructured"
+            href="/libs/mcm/content/admin.ico"
+            rel="shortcut icon"
+            tagName="link"
+            type="image/vnd.microsoft.icon"/>
+        <icon2
+            jcr:primaryType="nt:unstructured"
+            href="/libs/mcm/content/admin.ico"
+            rel="icon"
+            tagName="link"
+            type="image/vnd.microsoft.icon"/>
+    </tags>
+</jcr:root>
