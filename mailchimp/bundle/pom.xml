@@ -60,6 +60,22 @@
             <groupId>org.apache.sling</groupId>
             <artifactId>org.apache.sling.jcr.api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>aem-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        </dependency>
     </dependencies>
 
     <!-- ====================================================================== -->
@@ -84,7 +100,11 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+
                     <instructions>
+                        <Sling-Model-Packages>
+                            com.ttnd.cms.model
+                        </Sling-Model-Packages>
                         <Bundle-SymbolicName>com.ttnd.cms.mailchimp-bundle</Bundle-SymbolicName>
                     </instructions>
                 </configuration>
