@@ -13,7 +13,8 @@ import java.util.logging.Logger;
 @Component(label = "MailChimp Configuration Component",
         metatype = true,
         description = "MailChimp Configuration",
-        immediate=true)
+        immediate=true,
+        enabled = true)
 @Service(value = MailChimpConfiguration.class)
 public class MailChimpConfiguration {
 

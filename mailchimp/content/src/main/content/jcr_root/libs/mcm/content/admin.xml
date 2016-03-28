@@ -347,9 +347,8 @@
             xtype="mcmcampaignspanel"/>
         <mailChimpDashboard
             jcr:primaryType="cq:Widget"
-            id="mcdashboard"
             name="mcdashboard"
-            title="Mail Chimp Dashboard"
+            title="Mail1 Chimp Dashboard"
             xtype="mailchimpDashboard"/>
     </items>
     <tags jcr:primaryType="nt:unstructured">

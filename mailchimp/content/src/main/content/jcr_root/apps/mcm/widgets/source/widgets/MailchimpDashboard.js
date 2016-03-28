@@ -19,7 +19,7 @@
  * @param {Object} config The config object
  * @since 5.4
  */
-CQ.mcm.Dashboard = CQ.Ext.extend(CQ.Ext.Panel, {
+CQ.mcm.MailchimpDashboard = CQ.Ext.extend(CQ.Ext.Panel, {
 
     constructor: function(config) {
 
@@ -28,133 +28,62 @@ CQ.mcm.Dashboard = CQ.Ext.extend(CQ.Ext.Panel, {
         var listsStoreConfig = CQ.Util.applyDefaults({}, {
             "autoLoad": true,
             "proxy": new CQ.Ext.data.HttpProxy({
-                "url": "/libs/cq/security/content/authorizableSearch.json",
+                "url": "/service/mailchimp/import/lists",
                 "method": "GET"
             }),
             "reader": new CQ.Ext.data.JsonReader(
                 {
-                    "totalProperty": "results",
-                    "root": "authorizables",
-                    "id": "home"
+                    "totalProperty": "total_items",
+                    "root": "lists",
+                    "id": "id"
                 },
                 CQ.Ext.data.Record.create([
                     {
-                        "name": "name",
-                        "mapping": CQ.shared.XSS.getXSSPropertyName("name")
+                        "name": "name"
                     },
                     {
-                        "name": "home"
+                        "name":"id"
                     },
                     {
-                        "name": "membersTotal"
+                        "name": "membersTotal",
+                        "mapping": "stats.member_count"
                     }
                 ])
-            ),
-            "baseParams": {
-                "_charset_": "utf-8",
-                "ml": 2000, // membersLimit
-                "props": "name,home,membersTotal",
-                "query": new CQ.security.search.Query(CQ.Util.applyDefaults(config.queryCfg, {
-                    "category": "mcm",
-                    "selector": "group",
-                    "totalMax": 10,
-                    "sortBy": "@cq:lastModified",
-                    "sortDir": "desc"
-                })).getString()
-            }
+            )
         });
 
-        var segmentsStoreConfig = CQ.Util.applyDefaults({}, {
-            "autoLoad": true,
-            "proxy": new CQ.Ext.data.HttpProxy({
-                "url": "/bin/wcm/contentfinder/page/view.json/content",
-                "method": "GET"
-            }),
-            "reader": new CQ.Ext.data.JsonReader(
-                {
-                    "root": "hits",
-                    "id": "name"
-                },
-                CQ.Ext.data.Record.create([
-                    {
-                        "name": "title",
-                        "mapping": CQ.shared.XSS.getXSSPropertyName("title")
-                    },
-                    {
-                        "name": "lastModified"
-                    },
-                    {
-                        "name": "path"
-                    }
-                ])
-            ),
-            "baseParams": {
-                "_charset_": "utf-8",
-                "query": "path:/etc/segmentation",
-                "type": "cq:Page"
-            }
-        });
-
-        var reportsStoreConfig = CQ.Util.applyDefaults({}, {
-            "autoLoad": true,
-            "proxy": new CQ.Ext.data.HttpProxy({
-                "url": "/bin/wcm/contentfinder/page/view.json/content",
-                "method": "GET"
-            }),
-            "reader": new CQ.Ext.data.JsonReader(
-                {
-                    "root": "hits",
-                    "id": "name"
-                },
-                CQ.Ext.data.Record.create([
-                    {
-                        "name": "title",
-                        "mapping": CQ.shared.XSS.getXSSPropertyName("title")
-                    },
-                    {
-                        "name": "lastModified"
-                    },
-                    {
-                        "name": "path"
-                    }
-                ])
-            ),
-            "baseParams": {
-                "_charset_": "utf-8",
-                "query": "path:/etc/reports",
-                "type": "cq:Page"
-            }
-        });
 
         var campaignsStoreConfig = CQ.Util.applyDefaults({}, {
             "autoLoad": true,
             "proxy": new CQ.Ext.data.HttpProxy({
-                "url": "/bin/wcm/contentfinder/page/view.json/content",
+                "url": "/service/mailchimp/campaigns",
                 "method": "GET"
             }),
             "reader": new CQ.Ext.data.JsonReader(
                 {
-                    "root": "hits",
-                    "id": "name"
+					"totalProperty": "total_items",
+                    "root": "campaigns",
+                    "id": "id"
+
+
                 },
                 CQ.Ext.data.Record.create([
                     {
                         "name": "title",
-                        "mapping": CQ.shared.XSS.getXSSPropertyName("title")
+                        "mapping":"settings.title"
                     },
                     {
-                        "name": "lastModified"
+                        "name": "id"
                     },
                     {
-                        "name": "path"
+                        "name": "create_time"
                     }
+
                 ])
             ),
             "baseParams": {
-                "_charset_": "utf-8",
-                "query": "path:/content/campaigns",
-                "type": "cq:Page"
-            }
+                "action": "fetchAll"
+            }    
         });
 
         CQ.Util.applyDefaults(config,  {
@@ -188,7 +117,7 @@ CQ.mcm.Dashboard = CQ.Ext.extend(CQ.Ext.Panel, {
                                     "->",
                                         "-",
                                     {
-                                        "text": CQ.I18n.getMessage("New List.dddd.."),
+                                        "text": CQ.I18n.getMessage("New List..."),
                                         "handler": function() {
                                             CQ.security.SecurityAdmin.createGroup();
                                         }
@@ -219,7 +148,7 @@ CQ.mcm.Dashboard = CQ.Ext.extend(CQ.Ext.Panel, {
                                             '<table border="0" width="100%"><tbody>' +
                                             '<tpl for=".">' +
                                                 '<tr class="row"><td>' +
-                                                    '<span class="cq-security-grid-link" onclick="CQ.security.SecurityAdmin.showGroupInGrid(\'{home}\');">{name}</span>' +
+                                                    '<span class="cq-security-grid-link" onclick="CQ.security.SecurityAdmin.showGroupInGrid(\'{id}\');">{name}</span>' +
                                                 '</td><td class="cq-security-dashboard-right">' +
                                                     '{membersTotal}' +
                                                 '</td></tr>' +
@@ -238,14 +167,60 @@ CQ.mcm.Dashboard = CQ.Ext.extend(CQ.Ext.Panel, {
                                 ]
                             })
                         ]
+                    },
+                    {
+                        "xtype": "panel",
+                        "layout": "hbox",
+                        "border": false,
+                        "flex": 1,
+                        "items": [
+								this.campaignsPanel = new CQ.Ext.Panel({
+//                                "title": "Campaigns",
+                                "flex": 1,
+                                "height": 240,
+                                "autoScroll": true,
+                                "tbar": [
+                                    "Campaigns",//CQ.I18n.getMessage("Campaigns"),
+                                    "->",
+                                    {
+                                    "iconCls": "x-tbar-loading",
+                                    "handler": function() {db.campaignsDataView.getStore().reload();}
+                                }],
+                                "items": [
+                                    this.campaignsDataView = new CQ.Ext.DataView({
+                                        "cls": "cq-security-dashboard-dataview",
+                                        "autoHeight": true,
+//                                        "loadingText": CQ.I18n.getMessage("Loading content..."),
+                                        "multiSelect": false,
+                                        "singleSelect": true,
+                                        "overClass": "x-view-over",
+                                        "emptyText": CQ.I18n.getMessage("No items to display"),
+                                        "tpl":
+                                            '<table border="0" width="100%"><tbody>' +
+                                            '<tpl for=".">' +
+                                                '<tr class="row"><td>' +
+                                                    '<span class="cq-security-grid-link" onclick="CQ.security.SecurityAdmin.showGroupInGrid(\'{id}\');">{title}</span>' +
+                                                '</td><td class="cq-security-dashboard-right">' +
+                                                    '{create_time}' +
+                                                '</td></tr>' +
+                                            '</tpl>' +
+                                            '</tbody></table>',
+                                        "itemSelector": ".row",
+                                        "store": new CQ.Ext.data.GroupingStore(campaignsStoreConfig)
+
+                                    })
+                                ]
+                            })
+                        ]
+
                     }                 
                 ]
             }
         });
 
-        CQ.mcm.Dashboard.superclass.constructor.call(this, config);
+        CQ.mcm.MailchimpDashboard.superclass.constructor.call(this, config);
     }
 
 });
 
-CQ.Ext.reg("mailchimpDashboard", CQ.mcm.Dashboard);
+CQ.Ext.reg("mailchimpDashboard", CQ.mcm.MailchimpDashboard);

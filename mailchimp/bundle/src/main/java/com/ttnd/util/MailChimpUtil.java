@@ -1,13 +1,13 @@
 package com.ttnd.util;
 
 import com.ttnd.cms.Constants;
-import org.apache.sling.commons.json.JSONArray;
+import com.ttnd.mailchimp.model.SubscriptionList;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 
 import java.util.Dictionary;
 
-public class MailChimpUtil {
+public final class MailChimpUtil {
 
 	public static JSONObject getMailChimpList(Dictionary config){
 		JSONObject jsonResponse = null;
@@ -29,8 +29,70 @@ public class MailChimpUtil {
         }
     	return jsonResponse;
     }
-	
-/*
+
+	public static JSONObject getCampaigns(Dictionary config){
+		JSONObject jsonResponse = null;
+		if(config != null){
+			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+			if(domain != null && apikey != null && username != null){
+				String fechALLCampaignURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL;
+				try{
+					String response = HttpUtil.getHttpResponse(fechALLCampaignURL, username.toString(), apikey.toString(), "GET", null);
+					if(response != null){
+						jsonResponse = new JSONObject(response);
+					}
+				}catch(JSONException je){
+					je.printStackTrace();
+				}
+			}
+		}
+		return jsonResponse;
+	}
+
+	public static JSONObject sendCampaign(Dictionary config, String campaignID){
+		JSONObject jsonResponse = null;
+		if(config != null){
+			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+			if(domain != null && apikey != null && username != null && campaignID != null){
+				String sendCampaignURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL + campaignID + Constants.CAMPAIGN_ACTION_SEND;
+				try{
+					String response = HttpUtil.getHttpResponse(sendCampaignURL, username.toString(), apikey.toString(), "POST", null);
+					if(response != null){
+						jsonResponse = new JSONObject(response);
+					}
+				}catch(JSONException je){
+					je.printStackTrace();
+				}
+			}
+		}
+		return jsonResponse;
+	}
+
+	public static JSONObject createList(Dictionary config, SubscriptionList list){
+		JSONObject jsonResponse = null;
+		if(config != null){
+			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+			if(domain != null && apikey != null && username != null){
+				String listURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.LIST_URL;
+				try{
+					String response = HttpUtil.getHttpResponse(listURL, username.toString(), apikey.toString(), null, null);
+					if(response != null){
+						jsonResponse = new JSONObject(response);
+					}
+				}catch(JSONException je){
+					je.printStackTrace();
+				}
+			}
+		}
+		return jsonResponse;
+	}
+	/*
 	public static String subscribeUser(String emailD, String[] lists, Dictionary config){
 		try {
 			JSONObject params = new JSONObject();
@@ -59,7 +121,27 @@ public class MailChimpUtil {
 			e.printStackTrace();
 		}
 		return null;
+	}*/
+
+	public static JSONObject createCampaign(Dictionary config){
+		JSONObject jsonResponse = null;
+		if(config != null){
+			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+			if(domain != null && apikey != null && username != null){
+				String campaignURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL;
+				try{
+					String response = HttpUtil.getHttpResponse(campaignURL, username.toString(), apikey.toString(), "POST", null);
+					if(response != null){
+						jsonResponse = new JSONObject(response);
+					}
+				}catch(JSONException je){
+					je.printStackTrace();
+				}
+			}
+		}
+		return jsonResponse;
 	}
-*/
 
 }

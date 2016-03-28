@@ -23,6 +23,12 @@ public class Constants {
 
     public final static String BATCH_URL = "/batches";
 
+    public final static String CAMPAIGN_URL = "/campaigns";
+
+    public final static String CAMPAIGN_CONTENT_URL = "/content";
+
+    public final static String CAMPAIGN_ACTION_SEND = "/actions/send";
+
     public final static String SUSBSCRIBER_STATUS_SUBSCRIBED = "subscribed";
 
     public final static String SUSBSCRIBER_STATUS_UNSUBSCRIBED = "unsubscribed";

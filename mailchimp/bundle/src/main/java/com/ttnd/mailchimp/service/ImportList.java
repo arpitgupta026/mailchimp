@@ -1,23 +1,16 @@
 package com.ttnd.mailchimp.service;
 
-import com.ttnd.cms.model.MailChimpConfigService;
 import com.ttnd.cms.model.MailChimpConfiguration;
 import com.ttnd.util.MailChimpUtil;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.commons.json.JSONObject;
-import org.apache.sling.jcr.api.SlingRepository;
-import org.osgi.service.cm.ConfigurationAdmin;
 
-import javax.jcr.Session;
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.Dictionary;
 import java.util.logging.Logger;
 
 /**
