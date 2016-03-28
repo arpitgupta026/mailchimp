@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Dialog"
+    title="Send Newsletter Wizard"
+    xtype="sendnewsletterwizard">
+    <items
+        jcr:primaryType="cq:Widget"
+        xtype="tabpanel">
+        <items jcr:primaryType="cq:WidgetCollection">
+            <to
+                jcr:primaryType="cq:Panel"
+                layout="form"
+                title="Select recipients list">
+                <items jcr:primaryType="cq:WidgetCollection">
+                    <to
+                        jcr:primaryType="cq:Widget"
+                        allowBlank="false"
+                        authorizableCategory="mcm"
+                        displayField="name"
+                        fieldDescription="Select the list that should receive the newsletter."
+                        fieldLabel="Recipients List 1"
+                        filter="groups"
+                        hiddenName="letterRecipient"
+                        id="member-list-combo-box"
+                        name="recipientList"
+                        validationEvent="{Boolean}false"
+                        valueField="id"
+                        xtype="filteredauthselection">
+                        <listeners
+                            jcr:primaryType="nt:unstructured"
+                            select="function(box, record, index) {var d=box.findParentByType('sendnewsletterwizard'); if(d) {d.loadListRecipientsOverlay(record.id)}}"/>
+                    </to>
+                    <members
+                        jcr:primaryType="cq:Widget"
+                        allowBlank="true"
+                        fieldLabel=" "
+                        hidden="true"
+                        hideLabel="false"
+                        hideParent="true"
+                        id="member-list"
+                        xtype="displayfield"/>
+                    <defaultRecipientList
+                        jcr:primaryType="cq:Widget"
+                        name="./defaultRecipientList"
+                        xtype="hidden"/>
+                </items>
+            </to>
+            <last
+                jcr:primaryType="cq:Panel"
+                layout="form"
+                title="Finish">
+                <items jcr:primaryType="cq:WidgetCollection">
+                    <summary
+                        jcr:primaryType="cq:Widget"
+                        html="&lt;h1>Setup Complete&lt;/h1>&lt;p>You completed all steps. &lt;br>&lt;br>Click the &lt;em>Send&lt;/em> button below to send the newsletter to all the selected recipients.&lt;/p>"
+                        xtype="static"/>
+                </items>
+            </last>
+        </items>
+    </items>
+    <params
+        jcr:primaryType="nt:unstructured"
+        sling:bg="false"/>
+</jcr:root>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="cq:Dialog"
+    height="400"
+    stateful="false"
+    title="Settings"
+    xtype="dialog">
+    <items jcr:primaryType="cq:WidgetCollection">
+        <tabs
+            jcr:primaryType="cq:Widget"
+            xtype="tabpanel">
+            <items jcr:primaryType="cq:WidgetCollection">
+                <newsletter
+                    jcr:primaryType="cq:Widget"
+                    title="Email"
+                    xtype="panel">
+                    <items jcr:primaryType="cq:WidgetCollection">
+                        <main
+                            jcr:primaryType="cq:Widget"
+                            collapsed="{Boolean}false"
+                            collapsible="{Boolean}false"
+                            title=""
+                            xtype="dialogfieldset">
+                            <items jcr:primaryType="cq:WidgetCollection">
+                                <fromName
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Name that should appear as the sender of the newsletter."
+                                    fieldLabel="From Name"
+                                    name="./FromName"
+                                    xtype="textfield"/>
+                                <fromAddress
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Mail address that should appear as the sender of the newsletter."
+                                    fieldLabel="From Address"
+                                    name="./from"
+                                    xtype="textfield"/>
+                                <subject
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Subject of the newsletter."
+                                    fieldLabel="Subject"
+                                    name="./subject"
+                                    xtype="textfield"/>
+                                <replyToAddress
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Mail address that should address replies for sent newsletter."
+                                    fieldLabel="Reply To"
+                                    name="./ReplyTo"
+                                    xtype="textfield"/>
+                                <title
+                                    jcr:primaryType="cq:Widget"
+                                    fieldDescription="Title of the Campaign"
+                                    fieldLabel="Title"
+                                    name="./title"
+                                    xtype="textfield"/>
+                            </items>
+                        </main>
+                        <description_fieldset
+                            jcr:primaryType="cq:Widget"
+                            cls="cq-propsdialog-set-onofftime"
+                            collapsed="{Boolean}true"
+                            collapsible="{Boolean}true"
+                            title="Description"
+                            xtype="dialogfieldset">
+                            <items jcr:primaryType="cq:WidgetCollection">
+                                <description
+                                    jcr:primaryType="cq:Widget"
+                                    fieldLabel="Description"
+                                    hideLabel="{Boolean}true"
+                                    name="./jcr:description"
+                                    xtype="textarea"/>
+                            </items>
+                        </description_fieldset>
+                        <ontime
+                            jcr:primaryType="cq:Widget"
+                            cls="cq-propsdialog-set-onofftime"
+                            collapsed="{Boolean}true"
+                            collapsible="{Boolean}true"
+                            title="On Time"
+                            xtype="dialogfieldset">
+                            <items jcr:primaryType="cq:WidgetCollection">
+                                <ontime
+                                    jcr:primaryType="cq:Widget"
+                                    ctCls="cq-propsdialog-ontime"
+                                    fieldLabel="On Time"
+                                    name="./onTime"
+                                    xtype="datetime"/>
+                                <onTimeHint
+                                    jcr:primaryType="cq:Widget"
+                                    ignoreData="{Boolean}true"
+                                    name="./onTime@TypeHint"
+                                    value="Date"
+                                    xtype="hidden"/>
+                                <offTime
+                                    jcr:primaryType="cq:Widget"
+                                    ignoreData="{Boolean}true"
+                                    name="./offTime@ValueFrom"
+                                    value="./onTime"
+                                    xtype="hidden"/>
+                                <offTimeHint
+                                    jcr:primaryType="cq:Widget"
+                                    ignoreData="{Boolean}true"
+                                    name="./offTime@TypeHint"
+                                    value="Date"
+                                    xtype="hidden"/>
+                            </items>
+                        </ontime>
+                        <to
+                            jcr:primaryType="cq:Widget"
+                            fieldDescription="Select the default list that should receive the newsletter."
+                            fieldLabel="Default Recipients List"
+                            hiddenName="./defaultRecipientList"
+                            name="recipientList"
+                            options="/services/mailchimp/import/lists"
+                            optionsRoot="lists"
+                            optionsTextField="name"
+                            optionsValueField="id"
+                            type="select"
+                            xtype="selection"/>
+                    </items>
+                </newsletter>
+            </items>
+        </tabs>
+    </items>
+</jcr:root>

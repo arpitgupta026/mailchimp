@@ -28,7 +28,7 @@ CQ.mcm.MailchimpDashboard = CQ.Ext.extend(CQ.Ext.Panel, {
         var listsStoreConfig = CQ.Util.applyDefaults({}, {
             "autoLoad": true,
             "proxy": new CQ.Ext.data.HttpProxy({
-                "url": "/service/mailchimp/import/lists",
+                "url": "/services/mailchimp/import/lists",
                 "method": "GET"
             }),
             "reader": new CQ.Ext.data.JsonReader(
@@ -56,7 +56,7 @@ CQ.mcm.MailchimpDashboard = CQ.Ext.extend(CQ.Ext.Panel, {
         var campaignsStoreConfig = CQ.Util.applyDefaults({}, {
             "autoLoad": true,
             "proxy": new CQ.Ext.data.HttpProxy({
-                "url": "/service/mailchimp/campaigns",
+                "url": "/services/mailchimp/campaigns",
                 "method": "GET"
             }),
             "reader": new CQ.Ext.data.JsonReader(

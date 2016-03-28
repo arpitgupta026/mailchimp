@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * Created by Jatin on 3/3/2016.
  */
 
-@SlingServlet(paths = "/service/mailchimp/import/lists")
+@SlingServlet(paths = "/services/mailchimp/import/lists")
 public class ImportList extends SlingSafeMethodsServlet {
 
     private Logger log = Logger.getLogger(ImportList.class.getName());
