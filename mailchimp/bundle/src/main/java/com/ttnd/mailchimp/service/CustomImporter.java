@@ -1,64 +1,109 @@
 package com.ttnd.mailchimp.service;
 
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Value;
+
+/**
+ * Created by Arpit on 30/03/2016.
+ */
+
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
+import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.apache.jackrabbit.api.security.user.Group;
+import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
+import org.apache.sling.jcr.api.SlingRepository;
+import org.apache.sling.jcr.base.util.AccessControlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.day.cq.polling.importer.ImportException;
 import com.day.cq.polling.importer.Importer;
+import com.ttnd.mailchimp.SimplePrincipal;
+import com.ttnd.mailchimp.model.SubscriptionList;
+import com.ttnd.util.MailChimpUtil;
 
 @Service(value = Importer.class)
 @Component
 @Property(name = Importer.SCHEME_PROPERTY, value = "mailchimpListData", propertyPrivate = true)
 public class CustomImporter implements Importer {
-    private final static Logger LOGGER = LoggerFactory.getLogger(CustomImporter.class);
+	private final String GROUP_PATH = "/home/groups/ttnd";
+	private final String PROFILE_NODE = "profile";
+	private final String PROPERTY_CQ_AUTHORIZABLE_CATEGORY = "cq:authorizableCategory";
+	private final String PROPERTY_GIVENNAME = "givenName";
+	private final String PROPERTY_SLING_RESOURCE_TYPE = "sling:resourceType";	
+	private final String PROPERTY_ACCOUNT_EMAIL = "account";	
+	private final String PROPERTY_LIST_ID = "listid";	
+
+	private Session session = null;
+
+	@Reference
+	private SlingRepository slingRepository;
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(CustomImporter.class);
 
 	public void importData(String scheme, String dataSource, Resource resource) throws ImportException {
-		// TODO Auto-generated method stub
-		LOGGER.info("MyImporter started...");
-		LOGGER.info("Scheme {}", scheme);
-		LOGGER.info("DataSource {}", dataSource);
-		LOGGER.info("Resource {}", resource.getPath());
-		
+		LOGGER.info("Importer Service Started");
+    	JSONObject responseObj = new JSONObject();
+    	
+		try {
+			responseObj.put("status", "SUCCESS");
+			String paths = resource.adaptTo(Node.class).getParent().getPath();
+			Resource resource2 = resource.getResourceResolver().getResource(paths);
+			ValueMap configuration = resource2.adaptTo(ValueMap.class);
+			String username = configuration.get("apiUsername", String.class);
+			
+			List<SubscriptionList> lists = MailChimpUtil.getMailChimpList(configuration);
+			
+			if(lists != null){
+	    			if(slingRepository != null){
+	    				session = slingRepository.loginAdministrative(null);
+	    				UserManager userManager = AccessControlUtil.getUserManager(session);
+	    				if(userManager != null){
+	    					for(SubscriptionList list : lists){
+	    						if(null != userManager.getAuthorizable(list.getId()))
+	    							continue;
+	    						SimplePrincipal principal = new SimplePrincipal(list.getId());
+	    						if(principal != null){
+	    							Group group = userManager.createGroup(list.getId(), principal, GROUP_PATH);
+	    							Value authorizableVal = session.getValueFactory().createValue("mcm");
+	    							group.setProperty(PROPERTY_CQ_AUTHORIZABLE_CATEGORY, authorizableVal);
+	    							if(group != null){
+	    								Value givenNameVal = session.getValueFactory().createValue(list.getName());    	    							
+    	    							Value resourceTypeVal = session.getValueFactory().createValue("cq/security/components/profile");
+    	    							Value accountEmail = session.getValueFactory().createValue(username);
+    	    							Value listId = session.getValueFactory().createValue(list.getId());
+    	    							
+    	    							group.setProperty(PROFILE_NODE + "/" + PROPERTY_GIVENNAME, givenNameVal);
+    	    							group.setProperty(PROFILE_NODE + "/" + PROPERTY_SLING_RESOURCE_TYPE, resourceTypeVal);
+    	    							group.setProperty(PROFILE_NODE + "/" + PROPERTY_CQ_AUTHORIZABLE_CATEGORY, authorizableVal);
+    	    							group.setProperty(PROFILE_NODE + "/" + PROPERTY_ACCOUNT_EMAIL, accountEmail);
+    	    							group.setProperty(PROFILE_NODE + "/" + PROPERTY_LIST_ID, listId);
+	    							}
+	    						}
+	    					}
+	    				}
+	    				session.save();
+	    			}    		
+			}
+		}catch(RepositoryException e){
+			LOGGER.info("Repository Exception during List Creation {}",e);
+	    } catch (JSONException e) {
+	    	LOGGER.info("JSON Excepion {}",e);
+		}
 	}
 
 	public void importData(String arg0, String arg1, Resource arg2, String arg3, String arg4) throws ImportException {
-		// TODO Auto-generated method stub
 		LOGGER.info("MyImporter started...");
 	}
-	
-/*	   public void importData(String scheme, String dataSource, final Resource resource, String username, String password) throws ImportException{
-	        LOGGER.info(":::::::::::::::::::::::::::   Dropbox first :::::::::::::::::::::::::::::::");
-	        LOGGER.info(" :: scheme :: "  +  scheme + " :: dataSource :: " + dataSource  + " :: Resource :: " + resource);
-	    }
 
-	    public void importData(final String scheme, final String dataSource,
-	                           final Resource resource) throws ImportException {
-	        try {
-
-	            LOGGER.info(":::::::::::::::::::::::::::   Dropbox :::::::::::::::::::::::::::::::");
-	            LOGGER.info(" :: scheme :: "  +  scheme + " :: dataSource :: " + dataSource  + " :: Resource :: " + resource);
-	            ResourceResolver resolver = resource.getResourceResolver();
-	            if(resolver != null){
-	                Resource dataSourceresource  = resolver.getResource(dataSource);
-	                if(dataSourceresource != null){
-	                    Node dataSourceNode = dataSourceresource.adaptTo(Node.class);
-	                    if(dataSourceNode != null){
-	                        String accessToken = dataSourceNode.getProperty("access-token").getString();
-	                        String clientIdentifier = dataSourceNode.getProperty("dropbox-client-identifier").getString();
-	                        JSONArray dataArray = null;
-
-	                    }
-	                }
-	            }
-	        }
-	        catch (RepositoryException  e) {
-	            LOGGER.error("Dropbox  RepositoryException", e);
-	        }
-
-	    }*/
- 
 }

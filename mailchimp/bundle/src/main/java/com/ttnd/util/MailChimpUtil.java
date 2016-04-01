@@ -1,14 +1,19 @@
 package com.ttnd.util;
 
-import com.ttnd.cms.Constants;
-import com.ttnd.mailchimp.model.SubscriptionList;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 
+import com.ttnd.cms.Constants;
+import com.ttnd.mailchimp.model.SubscriptionList;
+
 public final class MailChimpUtil {
 
-	public static JSONObject getMailChimpList(ValueMap config){
+	public static JSONObject getMailChimpList2(ValueMap config){
 		JSONObject jsonResponse = null;
 		if(config != null){
 			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
@@ -28,6 +33,45 @@ public final class MailChimpUtil {
         }
     	return jsonResponse;
     }
+	
+	public static List<SubscriptionList> getMailChimpList(ValueMap config) {
+		JSONObject jsonObject = null;
+		List<SubscriptionList> lists = new ArrayList<SubscriptionList>();
+		if (config != null) {
+			Object accountDomain = config.get("accountDomain");
+			Object apiKey = config.get("apiKey");
+			Object username = config.get("apiUsername");
+			if (accountDomain != null && apiKey != null && username != null) {
+				String listURL = Constants.HTTPS_PROTOCOL + accountDomain.toString() + Constants.API_ENDPOINT
+						+ Constants.LIST_URL;
+				try {
+					String response = HttpUtil.getHttpResponse(listURL, username.toString(), apiKey.toString(), null,
+							null);
+					if (response != null) {
+						jsonObject = new JSONObject(response);
+					}
+					JSONArray getArray = jsonObject.getJSONArray("lists");
+
+					for (int i = 0; i < getArray.length(); i++) {
+						JSONObject listData = getArray.getJSONObject(i);
+						JSONObject campaignDefault = listData.getJSONObject("campaign_defaults");
+						
+						SubscriptionList subscriptionList = new SubscriptionList();
+						subscriptionList.setId(listData.get("id")!= null ? listData.get("id").toString() : "");
+						subscriptionList.setName(listData.get("name") != null ? listData.get("name").toString() : "");
+						subscriptionList.setLanguage(campaignDefault.get("language") != null ? campaignDefault.get("language").toString() : "");
+						subscriptionList.setFromEmail(campaignDefault.get("from_email") != null ? campaignDefault.get("from_email").toString() : "");
+						subscriptionList.setSubject(campaignDefault.get("subject") != null ? campaignDefault.get("subject").toString() : "");
+						subscriptionList.setFromName(campaignDefault.get("from_name") != null ? campaignDefault.get("from_name").toString() : "");
+						lists.add(subscriptionList);
+					}
+				} catch (JSONException je) {
+					je.printStackTrace();
+				}
+			}
+		}
+		return lists;
+	}
 
 	public static JSONObject getCampaigns(ValueMap config){
 		JSONObject jsonResponse = null;
