@@ -103,7 +103,7 @@
 
                     <instructions>
                         <Sling-Model-Packages>
-                            com.ttnd.cms.model
+                            com.ttnd.cms.helper
                         </Sling-Model-Packages>
                         <Bundle-SymbolicName>com.ttnd.cms.mailchimp-bundle</Bundle-SymbolicName>
                     </instructions>

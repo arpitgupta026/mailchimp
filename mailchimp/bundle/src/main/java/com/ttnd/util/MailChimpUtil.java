@@ -2,14 +2,13 @@ package com.ttnd.util;
 
 import com.ttnd.cms.Constants;
 import com.ttnd.mailchimp.model.SubscriptionList;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 
-import java.util.Dictionary;
-
 public final class MailChimpUtil {
 
-	public static JSONObject getMailChimpList(Dictionary config){
+	public static JSONObject getMailChimpList(ValueMap config){
 		JSONObject jsonResponse = null;
 		if(config != null){
 			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
@@ -30,7 +29,7 @@ public final class MailChimpUtil {
     	return jsonResponse;
     }
 
-	public static JSONObject getCampaigns(Dictionary config){
+	public static JSONObject getCampaigns(ValueMap config){
 		JSONObject jsonResponse = null;
 		if(config != null){
 			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
@@ -51,7 +50,7 @@ public final class MailChimpUtil {
 		return jsonResponse;
 	}
 
-	public static JSONObject sendCampaign(Dictionary config, String campaignID){
+	public static JSONObject sendCampaign(ValueMap config, String campaignID){
 		JSONObject jsonResponse = null;
 		if(config != null){
 			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
@@ -72,7 +71,7 @@ public final class MailChimpUtil {
 		return jsonResponse;
 	}
 
-	public static JSONObject createList(Dictionary config, SubscriptionList list){
+	public static JSONObject createList(ValueMap config, SubscriptionList list){
 		JSONObject jsonResponse = null;
 		if(config != null){
 			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
@@ -123,7 +122,7 @@ public final class MailChimpUtil {
 		return null;
 	}*/
 
-	public static JSONObject createCampaign(Dictionary config){
+	public static JSONObject createCampaign(ValueMap config, JSONObject params){
 		JSONObject jsonResponse = null;
 		if(config != null){
 			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
@@ -132,7 +131,28 @@ public final class MailChimpUtil {
 			if(domain != null && apikey != null && username != null){
 				String campaignURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL;
 				try{
-					String response = HttpUtil.getHttpResponse(campaignURL, username.toString(), apikey.toString(), "POST", null);
+					String response = HttpUtil.getHttpResponse(campaignURL, username.toString(), apikey.toString(), "POST", params);
+					if(response != null){
+						jsonResponse = new JSONObject(response);
+					}
+				}catch(JSONException je){
+					je.printStackTrace();
+				}
+			}
+		}
+		return jsonResponse;
+	}
+
+	public static JSONObject updateCampaignContent(ValueMap config, String campaignID, JSONObject params){
+		JSONObject jsonResponse = null;
+		if(config != null){
+			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+			if(domain != null && apikey != null && username != null && campaignID != null){
+				String updateCampaignContentURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL + campaignID + Constants.CAMPAIGN_CONTENT_URL;
+				try{
+					String response = HttpUtil.getHttpResponse(updateCampaignContentURL, username.toString(), apikey.toString(), "PUT", params);
 					if(response != null){
 						jsonResponse = new JSONObject(response);
 					}

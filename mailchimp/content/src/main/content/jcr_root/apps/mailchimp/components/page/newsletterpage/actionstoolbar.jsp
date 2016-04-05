@@ -2,10 +2,14 @@
 <%@page session="false" import="com.day.cq.i18n.I18n,
                 com.day.cq.wcm.api.WCMMode,
                 com.day.cq.wcm.api.components.Toolbar" %><%!
-%><%@include file="/libs/foundation/global.jsp" %><%
+%><%@include file="/libs/foundation/global.jsp" %>
+<cq:includeClientLib js="cq.mailchimp"/>
+<%
     // draw the 'edit' bar explicitly
     if (editContext != null) {
-%><table cellpadding="0" cellspacing="0" width="560" border="0"
+%>
+
+<table cellpadding="0" cellspacing="0" width="560" border="0"
          style="margin: 0 auto;"><tbody><tr>
     <td><div><%
         editContext.getComponentContext().setDecorate(false);
@@ -24,9 +28,14 @@
                 false,
                 I18n.get(slingRequest, "Test the newsletter")));
         tb.add(new Toolbar.Button(I18n.get(slingRequest, "Send..."),
+                "function() { sendNewsLetterToMailChimp(this) }",
+                false,
+                I18n.get(slingRequest, "Send the newsletter"))); 
+		tb.add(new Toolbar.Separator());
+        tb.add(new Toolbar.Button(I18n.get(slingRequest, "Export Newsletter to MailChimp"),
                 "function() { CQ.mcm.utils.Newsletter.openDialog(this, \"/apps/mailchimp/components/mcm/sendwizard/dialog.infinity.json\"); }",
                 false,
-                I18n.get(slingRequest, "Send the newsletter")));                      
+                I18n.get(slingRequest, "Export Newsletter to MailChimp")));                       
         //required to have the editbar into the table.
         out.flush();
         editContext.includeEpilog(slingRequest, slingResponse, WCMMode.EDIT);

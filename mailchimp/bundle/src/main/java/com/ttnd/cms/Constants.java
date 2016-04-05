@@ -11,8 +11,6 @@ public class Constants {
 
     public final static String METADATA_MAILCHIMP_USERNAME = "mailchimp.apiConfig.username";
 
-    public final static String MAILCHIMP_BUNDLE_PID = "com.ttnd.cms.model.MailChimpConfiguration";
-
     public final static String HTTPS_PROTOCOL = "https://";
 
     public final static String HTTP_PROTOCOL = "http://";
@@ -36,4 +34,12 @@ public class Constants {
     public final static String SUSBSCRIBER_STATUS_PENDING = "pending";
 
     public final static String SUSBSCRIBER_STATUS_CLEANED = "cleaned";
+
+    public final static String DASHBOARD = "dashboard";
+
+    public final static String PAGE = "page";
+
+    public final static String CQ_CLOUD_SERVICE_CONFIG_PROPERTY = "cq:cloudserviceconfigs";
+
+    public final static String MAILCHIMP_CONFIG_PATH = "/etc/cloudservices/mailchimp";
 }

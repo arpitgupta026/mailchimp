@@ -9,7 +9,7 @@
 --%>
 <%@page import="com.day.cq.widget.HtmlLibraryManager" %>
 <%@include file="/libs/foundation/global.jsp" %>
-
+<cq:includeClientLib js="cq.mailchimp.customCloudConfig"/>
 <body bgcolor="#444F55" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 
     <div id="wrapper">

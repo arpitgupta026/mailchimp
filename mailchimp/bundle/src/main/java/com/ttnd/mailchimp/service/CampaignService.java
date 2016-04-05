@@ -1,12 +1,13 @@
 package com.ttnd.mailchimp.service;
 
-import com.ttnd.cms.model.MailChimpConfiguration;
+import com.ttnd.cms.helper.JcrHelper;
 import com.ttnd.util.MailChimpUtil;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -18,36 +19,47 @@ import java.util.logging.Logger;
  */
 
 @SlingServlet(paths = "/services/mailchimp/campaigns")
-public class CampaignService extends SlingSafeMethodsServlet {
+public class CampaignService extends SlingAllMethodsServlet{
 
     private Logger log = Logger.getLogger(CampaignService.class.getName());
 
     @Reference
-    private MailChimpConfiguration mailChimpConfig;
-
+    private JcrHelper jcrHelper;
 
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException{
-        if(mailChimpConfig != null){
-            if(("fetchAll").equalsIgnoreCase(request.getParameter("action"))){
-                JSONObject campaigns = MailChimpUtil.getCampaigns(mailChimpConfig.getConfigDictionary());
-                if (campaigns != null) {
-                    response.getWriter().write(campaigns.toString());
-                }
+
+        if(("fetchAll").equalsIgnoreCase(request.getParameter("action"))){
+            JSONObject campaigns = new JSONObject();//MailChimpUtil.getCampaigns(mailChimpConfig.getConfigDictionary());
+            if (campaigns != null) {
+                response.getWriter().write(campaigns.toString());
             }
-            else if(("send").equalsIgnoreCase(request.getParameter("action"))){
-                String campaignID = request.getParameter("campaignID");
-                if(campaignID != null && campaignID.trim().length() > 0){
-                    JSONObject jsonResponse = MailChimpUtil.sendCampaign(mailChimpConfig.getConfigDictionary(), campaignID);
-                    if (jsonResponse != null) {
-                        response.getWriter().write(jsonResponse.toString());
-                    }
+        }
+        else
+            response.getWriter().write("No Action found for Campaign service");
+
+    }
+
+    protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException{
+        if(("send").equalsIgnoreCase(request.getParameter("action"))){
+            String campaignID = request.getParameter("campaignID");
+            String configs = request.getParameter("configs");
+            if(campaignID != null && campaignID.trim().length() > 0 &&
+                    jcrHelper != null && configs != null){
+                String configURL = "";
+                if(configs.indexOf(",") > -1){
+                   String[] configArray = configs.split(",");
+                    configURL = jcrHelper.getMailChimpConfigFromConfigs(configArray);
+                }else{
+                    configURL = configs;
                 }
+                ValueMap map = jcrHelper.getConfigFromCloudService(configURL);
+                if(map != null){
+                    JSONObject responseObj = MailChimpUtil.sendCampaign(map, campaignID);
+                    response.getWriter().write(responseObj.toString());
+                }
+
             }
-            else
-                response.getWriter().write("No Action found for Campaign service");
-        }else{
-            log.info("ImportListService : MailChimp Configuration Service Not Available");
         }
     }
 }

@@ -18,21 +18,21 @@
                             allowBlank="{Boolean}false"
                             fieldDescription="Account Domain associated with this MailChimp  account."
                             fieldLabel="MailChimp Account Domain"
-                            name="./accountDomain"
+                            name="./mailchimp.apiConfig.usDomain"
                             xtype="textfield"/>
                         <apiKey
                             jcr:primaryType="cq:Widget"
                             allowBlank="{Boolean}false"
                             fieldDescription="API Key for accessing Mailchimp Account"
                             fieldLabel="API Key"
-                            name="./apiKey"
+                            name="./mailchimp.apiConfig.key"
                             xtype="textfield"/>
                         <apiUsername
                             jcr:primaryType="cq:Widget"
                             allowBlank="{Boolean}false"
                             fieldDescription="API Username for accessing Mailchimp Account"
                             fieldLabel="API Username"
-                            name="./apiUsername"
+                            name="./mailchimp.apiConfig.username"
                             xtype="textfield"/>
                         <target
                             jcr:primaryType="cq:Widget"

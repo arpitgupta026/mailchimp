@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:primaryType="cq:Dialog"
     height="400"
     stateful="false"
@@ -104,21 +104,16 @@
                                     xtype="hidden"/>
                             </items>
                         </ontime>
-                        <to
-                            jcr:primaryType="cq:Widget"
-                            fieldDescription="Select the default list that should receive the newsletter."
-                            fieldLabel="Default Recipients List"
-                            hiddenName="./defaultRecipientList"
-                            name="recipientList"
-                            options="/services/mailchimp/import/lists"
-                            optionsRoot="lists"
-                            optionsTextField="name"
-                            optionsValueField="id"
-                            type="select"
-                            xtype="selection"/>
                     </items>
                 </newsletter>
+                <cloudservices
+                    jcr:primaryType="cq:Widget"
+                    path="/apps/mailchimp/components/page/newsletterpage/tab_cloudservices.infinity.json"
+                    xtype="cqinclude"/>
             </items>
         </tabs>
     </items>
+    <listeners
+        jcr:primaryType="nt:unstructured"
+        loadcontent="function(dialog){&#xa;var dialogRef = dialog&#xa;                            if(dialogRef &amp;&amp; dialogRef.path){&#xa;                                var dlgPath = dialogRef.path.replace(&quot;/jcr:content&quot;,&quot;&quot;);&#xa;                                var url = CQ.HTTP.noCaching(dlgPath + &quot;.cloudservices.json&quot;);&#xa;                                var response = CQ.HTTP.get(url);&#xa;                                if(response){&#xa;                                    var inheritData = CQ.HTTP.eval(response); &#xa;                                    if(inheritData){&#xa;                                        var configs = inheritData[&quot;cq:cloudserviceconfigs&quot;];&#xa;                                        if(configs){&#xa;                                            var configURL = &quot;&quot;;&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;var defaultPath = &quot;/etc/cloudservices/mailchimp&quot;;&#xa;                                            if($.isArray(configs)){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#xa;                                                $.each(configs, function( index, value ) {&#xa;                                                    if(value.indexOf(defaultPath) > -1){&#xa;&#xa;                                                        configURL = value;&#xa;                                                    }&#xa;                                                });&#xa;                                            }else{&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;if(configs.indexOf(defaultPath) > -1){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;configURL = configs;&#xa;                                                }&#xa;                                            }&#xa;                                            if(configURL.length > 0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;var listSelect = dialogRef.findById(&quot;list-selection&quot;);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;$.ajax({&#xa;                                                    url: '/services/mailchimp/import/lists?source=cloud&amp;path=' + configURL,&#xa;                                                    type: 'GET',&#xa;                                                    success: function(data){&#xa;                                                        if(data){&#xa;                                                            var jsonData = JSON.parse(data);&#xa;                                                            listSelect.reset();&#xa;                                                            listSelect.setOptions(jsonData);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;var listID = inheritData[&quot;default-list&quot;];&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;if( listID &amp;&amp; listID.length > 0){&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;listSelect.setValue(listID);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;listSelect.doLayout(false,false);&#xa;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;}&#xa;                                                    },&#xa;                                                    error:function(data){&#xa;                                                        console.log(data);&#xa;                                                    }&#xa;                                                });&#xa;                                            }&#xa;                                        }&#xa;                                    }&#xa;&#xa;                                }&#xa;&#xa;                            }&#xa;}"/>
 </jcr:root>
