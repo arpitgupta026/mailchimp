@@ -1,4 +1,4 @@
-package com.ttnd.mailchimp.service;
+package com.ttnd.cms.servlet;
 
 import com.ttnd.cms.helper.JcrHelper;
 import com.ttnd.util.MailChimpUtil;

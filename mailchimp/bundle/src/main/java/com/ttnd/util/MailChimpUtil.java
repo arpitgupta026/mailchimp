@@ -38,9 +38,9 @@ public final class MailChimpUtil {
 		JSONObject jsonObject = null;
 		List<SubscriptionList> lists = new ArrayList<SubscriptionList>();
 		if (config != null) {
-			Object accountDomain = config.get("accountDomain");
-			Object apiKey = config.get("apiKey");
-			Object username = config.get("apiUsername");
+			Object accountDomain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+			Object apiKey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
 			if (accountDomain != null && apiKey != null && username != null) {
 				String listURL = Constants.HTTPS_PROTOCOL + accountDomain.toString() + Constants.API_ENDPOINT
 						+ Constants.LIST_URL;
@@ -135,8 +135,8 @@ public final class MailChimpUtil {
 		}
 		return jsonResponse;
 	}
-	/*
-	public static String subscribeUser(String emailD, String[] lists, Dictionary config){
+
+	public static String subscribeUser(String emailD, String[] lists, ValueMap config){
 		try {
 			JSONObject params = new JSONObject();
 			String s = HttpUtil.getHashString(emailD, "MD5");
@@ -154,17 +154,20 @@ public final class MailChimpUtil {
 					jsonArray.put(obj);
 				}
 				params.put("operations", jsonArray);
-				String apiEndpoint = config.get(Constants.API_ENDPOINT_PRPOPERTY).toString();
-				String apikey = config.get(Constants.API_KEY_PRPOPERTY).toString();
-				String username = config.get(Constants.USERNAME_PRPOPERTY).toString();
-				String response = HttpUtil.getHttpResponse(apiEndpoint + Constants.BATCH_URL, username, apikey, "POST", params);
-				return response;
+				Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+				Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+				Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+				if(domain != null && apikey != null && username != null) {
+					String listSubscribeBatchURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.BATCH_URL;
+					String response = HttpUtil.getHttpResponse(listSubscribeBatchURL, username.toString(), apikey.toString(), "POST", params);
+					return response;
+				}
 			}
 		}catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return null;
-	}*/
+	}
 
 	public static JSONObject createCampaign(ValueMap config, JSONObject params){
 		JSONObject jsonResponse = null;

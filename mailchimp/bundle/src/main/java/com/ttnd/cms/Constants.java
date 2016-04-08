@@ -5,11 +5,11 @@ package com.ttnd.cms;
  */
 public class Constants {
 
-    public final static String METADATA_MAILCHIMP_DOMAIN = "mailchimp.apiConfig.usDomain";
+    public final static String METADATA_MAILCHIMP_DOMAIN = "accountDomain";
 
-    public final static String METADATA_MAILCHIMP_APIKEY = "mailchimp.apiConfig.key";
+    public final static String METADATA_MAILCHIMP_APIKEY = "apiKey";
 
-    public final static String METADATA_MAILCHIMP_USERNAME = "mailchimp.apiConfig.username";
+    public final static String METADATA_MAILCHIMP_USERNAME = "apiUsername";
 
     public final static String HTTPS_PROTOCOL = "https://";
 

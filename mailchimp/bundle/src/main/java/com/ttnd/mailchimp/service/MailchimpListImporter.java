@@ -1,15 +1,15 @@
 package com.ttnd.mailchimp.service;
 
+/**
+ * Created by Arpit on 30/03/2016.
+ */
+
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-
-/**
- * Created by Arpit on 30/03/2016.
- */
 
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Property;
@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import com.day.cq.polling.importer.ImportException;
 import com.day.cq.polling.importer.Importer;
+import com.ttnd.cms.Constants;
 import com.ttnd.mailchimp.SimplePrincipal;
 import com.ttnd.mailchimp.model.SubscriptionList;
 import com.ttnd.util.MailChimpUtil;
@@ -35,21 +36,21 @@ import com.ttnd.util.MailChimpUtil;
 @Service(value = Importer.class)
 @Component
 @Property(name = Importer.SCHEME_PROPERTY, value = "mailchimpListData", propertyPrivate = true)
-public class CustomImporter implements Importer {
+public class MailchimpListImporter implements Importer {
 	private final String GROUP_PATH = "/home/groups/ttnd";
 	private final String PROFILE_NODE = "profile";
 	private final String PROPERTY_CQ_AUTHORIZABLE_CATEGORY = "cq:authorizableCategory";
 	private final String PROPERTY_GIVENNAME = "givenName";
 	private final String PROPERTY_SLING_RESOURCE_TYPE = "sling:resourceType";	
 	private final String PROPERTY_ACCOUNT_EMAIL = "account";	
-	private final String PROPERTY_LIST_ID = "listid";	
+	private final String PROPERTY_LIST_ID = "list-id";	
 
 	private Session session = null;
 
 	@Reference
 	private SlingRepository slingRepository;
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(CustomImporter.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(MailchimpListImporter.class);
 
 	public void importData(String scheme, String dataSource, Resource resource) throws ImportException {
 		LOGGER.info("Importer Service Started");
@@ -60,7 +61,7 @@ public class CustomImporter implements Importer {
 			String paths = resource.adaptTo(Node.class).getParent().getPath();
 			Resource resource2 = resource.getResourceResolver().getResource(paths);
 			ValueMap configuration = resource2.adaptTo(ValueMap.class);
-			String username = configuration.get("apiUsername", String.class);
+			String username = configuration.get(Constants.METADATA_MAILCHIMP_USERNAME, String.class);
 			
 			List<SubscriptionList> lists = MailChimpUtil.getMailChimpList(configuration);
 			

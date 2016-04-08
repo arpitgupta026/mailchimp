@@ -18,21 +18,21 @@
                             allowBlank="{Boolean}false"
                             fieldDescription="Account Domain associated with this MailChimp  account."
                             fieldLabel="MailChimp Account Domain"
-                            name="./mailchimp.apiConfig.usDomain"
+                            name="./accountDomain"
                             xtype="textfield"/>
                         <apiKey
                             jcr:primaryType="cq:Widget"
                             allowBlank="{Boolean}false"
                             fieldDescription="API Key for accessing Mailchimp Account"
                             fieldLabel="API Key"
-                            name="./mailchimp.apiConfig.key"
+                            name="./apiKey"
                             xtype="textfield"/>
                         <apiUsername
                             jcr:primaryType="cq:Widget"
                             allowBlank="{Boolean}false"
                             fieldDescription="API Username for accessing Mailchimp Account"
                             fieldLabel="API Username"
-                            name="./mailchimp.apiConfig.username"
+                            name="./apiUsername"
                             xtype="textfield"/>
                         <target
                             jcr:primaryType="cq:Widget"
@@ -48,7 +48,7 @@
                             xtype="numberfield"/>
                         <source
                             jcr:primaryType="cq:Widget"
-                            defaultValue="mailchimpListData"
+                            id="source"
                             name="./pollMailchimp/source"
                             xtype="hidden"/>
                         <mimTypes
@@ -62,5 +62,7 @@
             </items>
         </tabs>
     </items>
-    <listeners jcr:primaryType="nt:unstructured"/>
+    <listeners
+        jcr:primaryType="nt:unstructured"
+        beforeSubmit="function(dialog){&#xa;&#x9;var source = dialog.findById(&quot;source&quot;);&#xa;&#x9;if(source){&#xa;&#x9;&#x9;source.setValue(&quot;mailchimpListData:&quot; + dialog.path);&#xa;&#x9;}&#xa;}"/>
 </jcr:root>
