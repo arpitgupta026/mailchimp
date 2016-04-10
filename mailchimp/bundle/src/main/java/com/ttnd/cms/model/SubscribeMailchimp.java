@@ -54,14 +54,18 @@ public class SubscribeMailchimp {
                             }
                             if(configPath != null && configPath.length() > 0){
                                 ValueMap configMap = jcrHelper.getConfigFromCloudService(configPath);
-                                JSONArray listArray = jcrHelper.getMailChimpListBasedOnUsername(configMap.get(Constants.METADATA_MAILCHIMP_USERNAME).toString());
-                                for(int i =0; i <listArray.length();i++){
-                                    JSONObject obj = listArray.getJSONObject(0);
-                                    SubscriptionList list = new SubscriptionList();
-                                    list.setName(obj.get("text").toString());
-                                    list.setId(obj.get("value").toString());
-                                    this.listIDs.add(list);
+                                Object username = configMap.get(Constants.METADATA_MAILCHIMP_USERNAME);
+                                if(username != null){
+                                	JSONArray listArray = jcrHelper.getMailChimpListBasedOnUsername(username.toString());
+                                    for(int i =0; i <listArray.length();i++){
+                                        JSONObject obj = listArray.getJSONObject(i);
+                                        SubscriptionList list = new SubscriptionList();
+                                        list.setName(obj.get("text").toString());
+                                        list.setId(obj.get("value").toString());
+                                        this.listIDs.add(list);
+                                    }
                                 }
+                                
                             }
                         }
                     }
@@ -71,6 +75,10 @@ public class SubscribeMailchimp {
                     r.printStackTrace();
                 }catch (JSONException je){
                     je.printStackTrace();
+                }catch(NullPointerException ne){
+                	ne.printStackTrace();
+                }catch(Exception e){
+                	e.printStackTrace();
                 }
             }
         }else{

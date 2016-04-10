@@ -49,21 +49,24 @@ public final class MailChimpUtil {
 							null);
 					if (response != null) {
 						jsonObject = new JSONObject(response);
-					}
-					JSONArray getArray = jsonObject.getJSONArray("lists");
-
-					for (int i = 0; i < getArray.length(); i++) {
-						JSONObject listData = getArray.getJSONObject(i);
-						JSONObject campaignDefault = listData.getJSONObject("campaign_defaults");
-						
-						SubscriptionList subscriptionList = new SubscriptionList();
-						subscriptionList.setId(listData.get("id")!= null ? listData.get("id").toString() : "");
-						subscriptionList.setName(listData.get("name") != null ? listData.get("name").toString() : "");
-						subscriptionList.setLanguage(campaignDefault.get("language") != null ? campaignDefault.get("language").toString() : "");
-						subscriptionList.setFromEmail(campaignDefault.get("from_email") != null ? campaignDefault.get("from_email").toString() : "");
-						subscriptionList.setSubject(campaignDefault.get("subject") != null ? campaignDefault.get("subject").toString() : "");
-						subscriptionList.setFromName(campaignDefault.get("from_name") != null ? campaignDefault.get("from_name").toString() : "");
-						lists.add(subscriptionList);
+						if(jsonObject != null){
+							JSONArray listArray = jsonObject.getJSONArray("lists");
+							if(listArray != null){
+								for (int i = 0; i < listArray.length(); i++) {
+									JSONObject listData = listArray.getJSONObject(i);
+									JSONObject campaignDefault = listData.getJSONObject("campaign_defaults");
+									
+									SubscriptionList subscriptionList = new SubscriptionList();
+									subscriptionList.setId(listData.get("id")!= null ? listData.get("id").toString() : "");
+									subscriptionList.setName(listData.get("name") != null ? listData.get("name").toString() : "");
+									subscriptionList.setLanguage(campaignDefault.get("language") != null ? campaignDefault.get("language").toString() : "");
+									subscriptionList.setFromEmail(campaignDefault.get("from_email") != null ? campaignDefault.get("from_email").toString() : "");
+									subscriptionList.setSubject(campaignDefault.get("subject") != null ? campaignDefault.get("subject").toString() : "");
+									subscriptionList.setFromName(campaignDefault.get("from_name") != null ? campaignDefault.get("from_name").toString() : "");
+									lists.add(subscriptionList);
+								}
+							}	
+						}
 					}
 				} catch (JSONException je) {
 					je.printStackTrace();
@@ -136,7 +139,11 @@ public final class MailChimpUtil {
 		return jsonResponse;
 	}
 
-	public static String subscribeUser(String emailD, String[] lists, ValueMap config){
+	// Don't remove this code as this would be needed when the MailChimp API will support batch operation for lead creation
+	//Current API has the bug.
+	
+	public static JSONObject subscribeUser(String emailD, String[] lists, ValueMap config){
+		JSONObject jsonResponse = null;
 		try {
 			JSONObject params = new JSONObject();
 			String s = HttpUtil.getHashString(emailD, "MD5");
@@ -149,7 +156,7 @@ public final class MailChimpUtil {
 					obj.put("path", relativePath);
 					JSONObject info = new JSONObject();
 					info.put("email_address", emailD);
-					info.put("status_if_new", Constants.SUSBSCRIBER_STATUS_PENDING);
+					info.put("status", Constants.SUSBSCRIBER_STATUS_PENDING);
 					obj.put("body", info.toString());
 					jsonArray.put(obj);
 				}
@@ -160,14 +167,52 @@ public final class MailChimpUtil {
 				if(domain != null && apikey != null && username != null) {
 					String listSubscribeBatchURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.BATCH_URL;
 					String response = HttpUtil.getHttpResponse(listSubscribeBatchURL, username.toString(), apikey.toString(), "POST", params);
-					return response;
+					try{
+						if(response != null){
+							jsonResponse = new JSONObject(response);
+						}
+					}catch(JSONException je){
+						je.printStackTrace();
+					}
 				}
 			}
 		}catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return jsonResponse;
 	}
+	
+	/*public static JSONObject subscribeUser(String emailD, String[] lists, ValueMap config){
+		JSONObject jsonResponse = null;
+		try {
+			String s = HttpUtil.getHashString(emailD, "MD5");
+			if(s != null && lists != null && lists.length > 0 ){
+				Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+				Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+				Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+				if(domain != null && apikey != null && username != null) {
+					for (int i=0 ;i < lists.length; i++){
+						JSONObject params = new JSONObject();
+						params.put("email_address", emailD);
+						params.put("status", Constants.SUSBSCRIBER_STATUS_PENDING);
+						String listSubscribeURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.LIST_URL +  "/"+ lists[i] + Constants.MEMBERS  + "/" + s;
+						String response = HttpUtil.getHttpResponse(listSubscribeURL, username.toString(), apikey.toString(), "PUT", params);
+						try{
+							if(response != null){
+								jsonResponse = new JSONObject(response);
+							}
+						}catch(JSONException je){
+							je.printStackTrace();
+						}
+					}
+					
+				}
+			}
+		}catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return jsonResponse;
+	}*/
 
 	public static JSONObject createCampaign(ValueMap config, JSONObject params){
 		JSONObject jsonResponse = null;

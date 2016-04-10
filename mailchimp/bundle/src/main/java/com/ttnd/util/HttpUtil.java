@@ -26,12 +26,12 @@ public class HttpUtil {
                 URL _url = new URL(url);
                 HttpURLConnection urlConnection = (HttpURLConnection)_url.openConnection();
                 urlConnection.setRequestProperty("Authorization", "Basic " + s);
-                if(method != null && method.trim().equalsIgnoreCase("POST")){
-                    OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
-                    urlConnection.setRequestMethod("POST");
+                if(method != null && (method.trim().equalsIgnoreCase("POST") || method.trim().equalsIgnoreCase("PUT"))){
+                	urlConnection.setRequestMethod(method);
                     urlConnection.setDoOutput(true);
                     urlConnection.setRequestProperty("Content-type", "application/json");
                     urlConnection.setRequestProperty("Accept", "*/*");
+                    OutputStreamWriter writer = new OutputStreamWriter(urlConnection.getOutputStream());
                     if(params != null){
                         writer.write(params.toString());
                         writer.flush();

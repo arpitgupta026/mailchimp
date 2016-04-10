@@ -42,4 +42,6 @@ public class Constants {
     public final static String CQ_CLOUD_SERVICE_CONFIG_PROPERTY = "cq:cloudserviceconfigs";
 
     public final static String MAILCHIMP_CONFIG_PATH = "/etc/cloudservices/mailchimp";
+    
+    public final static String MEMBERS = "/members";
 }

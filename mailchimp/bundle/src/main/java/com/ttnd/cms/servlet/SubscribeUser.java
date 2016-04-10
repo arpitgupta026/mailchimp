@@ -9,6 +9,7 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.apache.sling.commons.json.JSONObject;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -34,11 +35,21 @@ public class SubscribeUser extends SlingAllMethodsServlet {
             String[] listIDs = request.getParameterValues("listID");
             if(path != null){
                 Resource resource = jcrHelper.findResource(path);
-                if(resource != null){
-                    ValueMap map = jcrHelper.getConfigFromCloudService(path);
+                if(resource != null && emailID != null 
+                		&& listIDs != null && listIDs.length > 0 && path != null){
+                	String configURL = "";
+                    if(path.indexOf(",") > -1){
+                       String[] configArray = path.split(",");
+                        configURL = jcrHelper.getMailChimpConfigFromConfigs(configArray);
+                    }else{
+                        configURL = path;
+                    }
+                    ValueMap map = jcrHelper.getConfigFromCloudService(configURL);
                     if(map != null){
-                        String responseObj = MailChimpUtil.subscribeUser(emailID, listIDs, map);
-                        response.getWriter().write(responseObj);
+                        JSONObject responseObj = MailChimpUtil.subscribeUser(emailID, listIDs, map);
+                        if(responseObj != null){
+                        	response.getWriter().write(responseObj.toString());
+                        }
                     }
                 }
             }
