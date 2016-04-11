@@ -1,5 +1,7 @@
 package com.ttnd.cms.helper;
 
+import com.day.cq.commons.Externalizer;
+import com.day.cq.contentsync.handler.util.RequestResponseFactory;
 import com.day.cq.search.PredicateGroup;
 import com.day.cq.search.Query;
 import com.day.cq.search.QueryBuilder;
@@ -7,18 +9,31 @@ import com.day.cq.search.result.SearchResult;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.PageManagerFactory;
+import com.day.cq.wcm.api.WCMMode;
 import com.ttnd.cms.Constants;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.*;
 import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
+import org.apache.sling.engine.SlingRequestProcessor;
 import org.apache.sling.jcr.api.SlingRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -42,6 +57,15 @@ public class JcrHelper {
 
     @Reference
     private QueryBuilder queryBuilder;
+    
+    @Reference
+	Externalizer externalizer;
+    
+    @Reference
+	private RequestResponseFactory requestResponseFactory;
+
+	@Reference
+	private SlingRequestProcessor requestProcessor;
 
     public ValueMap getConfigFromCloudService(String path){
         ValueMap map = null;
@@ -151,4 +175,55 @@ public class JcrHelper {
         return listArray;
     }
 
+    public String modifyHTMLLinksToExternal(String path, SlingHttpServletRequest request){
+    	String html = null;
+    	try{
+    		if(path != null && requestResponseFactory != null){
+        		HttpServletRequest req = requestResponseFactory.createRequest("GET", path);
+        		WCMMode.DISABLED.toRequest(req);
+        		ByteArrayOutputStream out = new ByteArrayOutputStream();
+        		HttpServletResponse resp = requestResponseFactory.createResponse(out);
+        		String myExternalizedUrl = null;
+        		/* Process request through Sling */
+        		requestProcessor.processRequest(req, resp, request.getResourceResolver());
+        		html = out.toString();
+        		Document doc = Jsoup.parse(html);
+
+        		Elements links = doc.select("a[href]");
+        		Elements media = doc.select("[src]");
+        		Elements imports = doc.select("link[href]");
+
+        		for (Element src : media) {
+        			if (src.tagName().equals("img")) {
+        				myExternalizedUrl = externalizer.externalLink(request.getResourceResolver(), "mailchimp",
+        						src.attr("src"));
+        				src.attr("src", myExternalizedUrl);
+        			} else
+        			myExternalizedUrl = externalizer.externalLink(request.getResourceResolver(), "mailchimp", src.attr("src"));
+        			src.attr("src", myExternalizedUrl);
+        		}
+
+        		for (Element link : imports) {
+        			myExternalizedUrl = externalizer.externalLink(request.getResourceResolver(), "mailchimp", link.attr("src"));
+        			link.attr("src", myExternalizedUrl);
+        		}
+
+        		for (Element link : links) {
+        			myExternalizedUrl = externalizer.externalLink(request.getResourceResolver(), "mailchimp", link.attr("src"));
+        			link.attr("src", myExternalizedUrl);
+        		}
+        		
+        		html = doc.toString();
+    		}	
+
+    	}catch(IOException io){
+    		io.printStackTrace();
+    	}
+    	catch(ServletException s){
+    		s.printStackTrace();
+    	}
+    	    	
+    	return html;
+    }	
+    
 }

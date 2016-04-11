@@ -1,13 +1,16 @@
 package com.ttnd.cms.servlet;
 
+
 import com.ttnd.cms.helper.JcrHelper;
 import com.ttnd.util.MailChimpUtil;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 
 import javax.servlet.ServletException;
@@ -25,7 +28,7 @@ public class CampaignService extends SlingAllMethodsServlet{
 
     @Reference
     private JcrHelper jcrHelper;
-
+    
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException{
 
@@ -41,25 +44,93 @@ public class CampaignService extends SlingAllMethodsServlet{
     }
 
     protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response) throws ServletException, IOException{
-        if(("send").equalsIgnoreCase(request.getParameter("action"))){
-            String campaignID = request.getParameter("campaignID");
-            String configs = request.getParameter("configs");
-            if(campaignID != null && campaignID.trim().length() > 0 &&
-                    jcrHelper != null && configs != null){
-                String configURL = "";
-                if(configs.indexOf(",") > -1){
-                   String[] configArray = configs.split(",");
-                    configURL = jcrHelper.getMailChimpConfigFromConfigs(configArray);
-                }else{
-                    configURL = configs;
-                }
-                ValueMap map = jcrHelper.getConfigFromCloudService(configURL);
-                if(map != null){
-                    JSONObject responseObj = MailChimpUtil.sendCampaign(map, campaignID);
-                    response.getWriter().write(responseObj.toString());
-                }
+    	String configs = request.getParameter("configs");
+    	if(configs != null && configs.length() > 0){
+    		String configURL = getConfigURLFromConfigs(configs);
+        	if(configURL != null && jcrHelper != null){
+        		ValueMap map = jcrHelper.getConfigFromCloudService(configURL);
+        		if(("send").equalsIgnoreCase(request.getParameter("action"))){
+                    String campaignID = request.getParameter("campaignID");
+                    if(campaignID != null && campaignID.trim().length() > 0){
+                        if(map != null){
+                            JSONObject responseObj = MailChimpUtil.sendCampaign(map, campaignID);
+                            response.getWriter().write(responseObj.toString());
+                        }
+                    }
+                }else if(("export").equalsIgnoreCase(request.getParameter("action"))){
+                	String pagePath = request.getParameter("pagePath");
+                	String pageURL = pagePath;
+                	try{
+                		if(pagePath != null && map != null){
+                    		Resource resource = jcrHelper.findResource(pagePath);
+                    		if(resource != null){
+                    			ValueMap campaignConfigMap = resource.adaptTo(ValueMap.class);
+                    			if(campaignConfigMap != null){
+                    				String fromName = campaignConfigMap.get("FromName").toString();
+                                    String replyTo = campaignConfigMap.get("ReplyTo").toString();
+                                    String from = campaignConfigMap.get("from").toString();
+                                    String subject = campaignConfigMap.get("subject").toString();
+                                    String title = campaignConfigMap.get("jcr:title").toString();
+                                    String recipientList = campaignConfigMap.get("default-list").toString();
+                                    String onTime = campaignConfigMap.get("onTime").toString();
 
-            }
+                                    JSONObject params = new JSONObject();
+                                    params.put("type", "regular");
+
+                                    JSONObject recipientObj = new JSONObject();
+                                    recipientObj.put("list_id", recipientList);
+                                    params.put("recipients", recipientObj);
+
+                                    JSONObject settingsObj = new JSONObject();
+                                    settingsObj.put("subject_line", subject);
+                                    settingsObj.put("title", title);
+                                    settingsObj.put("from_name", fromName);
+                                    settingsObj.put("reply_to", replyTo);
+                                    settingsObj.put("auto_footer", true);
+                                    settingsObj.put("inline_css", true);
+                                    params.put("settings", settingsObj);
+                                    JSONObject campaignCreationResponse = MailChimpUtil.createCampaign(map, params);
+                                    if(campaignCreationResponse != null){
+                                        Object id = campaignCreationResponse.get("id");
+                                        if(id != null){
+                                            JSONObject contentParams = new JSONObject();
+                                            String html = jcrHelper.modifyHTMLLinksToExternal(pagePath.replace("/jcr:content", ".html"), request);
+                                            if(html != null){
+                                            	contentParams.put("html", html);
+                                                JSONObject contentJSONResponse = MailChimpUtil.updateCampaignContent(map, id.toString(), contentParams);
+                                                if(contentJSONResponse != null){
+                                                    response.getWriter().write(contentJSONResponse.toString());
+                                                }
+                                                
+                                            }	
+                                    		
+
+                                        }
+
+
+                                    }
+                                }
+                    		}
+                    		
+                    	}
+                	}catch(JSONException je){
+                		je.printStackTrace();
+                	}
+                	
+                }
+        	}
+    	}
+    	
+    }
+    
+    private String getConfigURLFromConfigs(String configs){
+    	String configURL = null;
+        if(configs.indexOf(",") > -1){
+           String[] configArray = configs.split(",");
+            configURL = jcrHelper.getMailChimpConfigFromConfigs(configArray);
+        }else{
+            configURL = configs;
         }
+    	return configURL;
     }
 }

@@ -28,12 +28,12 @@
                 false,
                 I18n.get(slingRequest, "Test the newsletter")));
         tb.add(new Toolbar.Button(I18n.get(slingRequest, "Send..."),
-                "function() { sendNewsLetterToMailChimp(this) }",
+                "function() { performAction(this, 'send') }",
                 false,
                 I18n.get(slingRequest, "Send the newsletter"))); 
 		tb.add(new Toolbar.Separator());
         tb.add(new Toolbar.Button(I18n.get(slingRequest, "Export Newsletter to MailChimp"),
-                "function() { CQ.mcm.utils.Newsletter.openDialog(this, \"/apps/mailchimp/components/mcm/sendwizard/dialog.infinity.json\"); }",
+                "function() { performAction(this, 'export') }",
                 false,
                 I18n.get(slingRequest, "Export Newsletter to MailChimp")));                       
         //required to have the editbar into the table.

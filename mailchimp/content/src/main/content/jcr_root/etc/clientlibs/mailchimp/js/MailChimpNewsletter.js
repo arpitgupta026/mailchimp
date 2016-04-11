@@ -1,4 +1,4 @@
-function sendNewsLetterToMailChimp(ref){
+function performAction(ref, action){
     if(ref && ref.path){
         var dlgPath = ref.path.replace("/jcr:content","");
         var url = CQ.HTTP.noCaching(dlgPath + ".cloudservices.json");
@@ -17,12 +17,13 @@ function sendNewsLetterToMailChimp(ref){
 						configURL = configs;
                     }
                 }
-                if(listID){
+                if(listID && action && action.length > 0){
                     var params = {};
-					params["campaignID"] = listID;
+					params["listID"] = listID;
                     params["configs"] = configURL;
+                    params["pagePath"] = ref.path;
                     $.ajax({
-                        url: '/services/mailchimp/campaigns?action=send',
+                        url: '/services/mailchimp/campaigns?action=' + action,
                         type: 'POST',
                         data: params,
                         dataType: "json",
