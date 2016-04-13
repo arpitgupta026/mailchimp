@@ -5,6 +5,7 @@ function performAction(ref, action){
         var response = CQ.HTTP.get(url);
         if(response){
             var inheritData = CQ.HTTP.eval(response); 
+            var campaignID = inheritData["campaignID"];
             if(inheritData){
                 var listID = inheritData["default-list"];
                 var configs = inheritData["cq:cloudserviceconfigs"];
@@ -22,6 +23,7 @@ function performAction(ref, action){
 					params["listID"] = listID;
                     params["configs"] = configURL;
                     params["pagePath"] = ref.path;
+                    params["campaignID"] = campaignID;
                     $.ajax({
                         url: '/services/mailchimp/campaigns?action=' + action,
                         type: 'POST',

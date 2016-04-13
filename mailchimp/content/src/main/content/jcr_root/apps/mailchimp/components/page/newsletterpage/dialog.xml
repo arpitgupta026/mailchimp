@@ -90,18 +90,6 @@
                                     name="./onTime@TypeHint"
                                     value="Date"
                                     xtype="hidden"/>
-                                <offTime
-                                    jcr:primaryType="cq:Widget"
-                                    ignoreData="{Boolean}true"
-                                    name="./offTime@ValueFrom"
-                                    value="./onTime"
-                                    xtype="hidden"/>
-                                <offTimeHint
-                                    jcr:primaryType="cq:Widget"
-                                    ignoreData="{Boolean}true"
-                                    name="./offTime@TypeHint"
-                                    value="Date"
-                                    xtype="hidden"/>
                             </items>
                         </ontime>
                     </items>

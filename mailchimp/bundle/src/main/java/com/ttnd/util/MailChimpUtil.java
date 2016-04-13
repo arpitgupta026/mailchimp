@@ -13,27 +13,6 @@ import com.ttnd.mailchimp.model.SubscriptionList;
 
 public final class MailChimpUtil {
 
-	public static JSONObject getMailChimpList2(ValueMap config){
-		JSONObject jsonResponse = null;
-		if(config != null){
-			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
-			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
-			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
-			if(domain != null && apikey != null && username != null){
-				String listURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.LIST_URL;
-				try{
-					String response = HttpUtil.getHttpResponse(listURL, username.toString(), apikey.toString(), null, null);
-					if(response != null){
-						jsonResponse = new JSONObject(response);
-					}
-				}catch(JSONException je){
-					je.printStackTrace();
-				}
-			}
-        }
-    	return jsonResponse;
-    }
-	
 	public static List<SubscriptionList> getMailChimpList(ValueMap config) {
 		JSONObject jsonObject = null;
 		List<SubscriptionList> lists = new ArrayList<SubscriptionList>();
@@ -104,7 +83,7 @@ public final class MailChimpUtil {
 			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
 			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
 			if(domain != null && apikey != null && username != null && campaignID != null){
-				String sendCampaignURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL + campaignID + Constants.CAMPAIGN_ACTION_SEND;
+				String sendCampaignURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL + "/" + campaignID + Constants.CAMPAIGN_ACTION_SEND;
 				try{
 					String response = HttpUtil.getHttpResponse(sendCampaignURL, username.toString(), apikey.toString(), "POST", null);
 					if(response != null){
@@ -242,7 +221,7 @@ public final class MailChimpUtil {
 			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
 			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
 			if(domain != null && apikey != null && username != null && campaignID != null){
-				String updateCampaignContentURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL + campaignID + Constants.CAMPAIGN_CONTENT_URL;
+				String updateCampaignContentURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL + "/" + campaignID + Constants.CAMPAIGN_CONTENT_URL;
 				try{
 					String response = HttpUtil.getHttpResponse(updateCampaignContentURL, username.toString(), apikey.toString(), "PUT", params);
 					if(response != null){

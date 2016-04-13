@@ -1,15 +1,20 @@
 package com.ttnd.util;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
 
 /**
  * Created by Jatin on 3/3/2016.
@@ -48,33 +53,6 @@ public class HttpUtil {
         }
         return null;
     }
-
-
-    /*public static String handleGetRequest(String url, JSONObject params){
-        if(url != null && url.trim().length()>0){
-            try{
-                StringBuffer requestParams = new StringBuffer("");
-                if(params != null){
-                    for (Object obj : params.entrySet()) {
-                        String key = obj.toString();
-                        requestParams.append(key);
-                        requestParams.append("&");
-                    }
-                }
-                url = url + "?"  + requestParams.toString();
-                URL _url = new URL(url);
-                HttpURLConnection urlConnection = (HttpURLConnection)_url.openConnection();
-                InputStream is = urlConnection.getInputStream();
-                return getStringFromInputStream(is);
-            }
-            catch(MalformedURLException e){
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }*/
 
     public static String getHashString(String message, String algorithm)
     {
