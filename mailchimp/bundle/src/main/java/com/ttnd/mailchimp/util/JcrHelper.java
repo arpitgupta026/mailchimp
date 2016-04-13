@@ -1,4 +1,4 @@
-package com.ttnd.cms.helper;
+package com.ttnd.mailchimp.util;
 
 import com.day.cq.commons.Externalizer;
 import com.day.cq.contentsync.handler.util.RequestResponseFactory;
@@ -10,7 +10,8 @@ import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.PageManagerFactory;
 import com.day.cq.wcm.api.WCMMode;
-import com.ttnd.cms.Constants;
+import com.ttnd.mailchimp.Constants;
+
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;

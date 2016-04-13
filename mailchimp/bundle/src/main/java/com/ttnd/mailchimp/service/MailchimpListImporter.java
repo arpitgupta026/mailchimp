@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import com.day.cq.polling.importer.ImportException;
 import com.day.cq.polling.importer.Importer;
-import com.ttnd.cms.Constants;
-import com.ttnd.mailchimp.SimplePrincipal;
+import com.ttnd.mailchimp.Constants;
+import com.ttnd.mailchimp.model.SimplePrincipal;
 import com.ttnd.mailchimp.model.SubscriptionList;
-import com.ttnd.util.MailChimpUtil;
+import com.ttnd.mailchimp.util.MailChimpUtil;
 
 @Service(value = Importer.class)
 @Component

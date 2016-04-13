@@ -1,9 +1,14 @@
-package com.ttnd.cms.model;
+package com.ttnd.mailchimp.service;
 
-import com.day.cq.wcm.api.Page;
-import com.ttnd.cms.Constants;
-import com.ttnd.cms.helper.JcrHelper;
-import com.ttnd.mailchimp.model.SubscriptionList;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -13,9 +18,9 @@ import org.apache.sling.commons.json.JSONArray;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 
-import javax.jcr.*;
-import java.util.ArrayList;
-import java.util.List;
+import com.ttnd.mailchimp.Constants;
+import com.ttnd.mailchimp.model.SubscriptionList;
+import com.ttnd.mailchimp.util.JcrHelper;
 
 /**
  * Created by Jatin on 4/6/2016.

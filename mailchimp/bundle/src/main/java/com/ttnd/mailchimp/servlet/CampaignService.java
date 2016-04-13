@@ -1,8 +1,17 @@
-package com.ttnd.cms.servlet;
+package com.ttnd.mailchimp.servlet;
 
 
-import com.ttnd.cms.helper.JcrHelper;
-import com.ttnd.util.MailChimpUtil;
+import java.io.IOException;
+import java.util.logging.Logger;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
+import javax.servlet.ServletException;
+
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -13,9 +22,8 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-import java.util.logging.Logger;
+import com.ttnd.mailchimp.util.JcrHelper;
+import com.ttnd.mailchimp.util.MailChimpUtil;
 
 /**
  * Created by Jatin on 3/3/2016.
@@ -92,6 +100,9 @@ public class CampaignService extends SlingAllMethodsServlet{
                                     JSONObject campaignCreationResponse = MailChimpUtil.createCampaign(map, params);
                                     if(campaignCreationResponse != null){
                                         Object id = campaignCreationResponse.get("id");
+                                        Node node = resource.adaptTo(Node.class);
+                                        node.setProperty("campaignID", id != null ? id.toString() : "");
+                                        node.getSession().save();
                                         if(id != null){
                                             JSONObject contentParams = new JSONObject();
                                             String html = jcrHelper.modifyHTMLLinksToExternal(pagePath.replace("/jcr:content", ".html"), request);
@@ -115,7 +126,22 @@ public class CampaignService extends SlingAllMethodsServlet{
                     	}
                 	}catch(JSONException je){
                 		je.printStackTrace();
-                	}
+                	} catch (ValueFormatException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (VersionException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (LockException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ConstraintViolationException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (RepositoryException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
                 	
                 }
         	}

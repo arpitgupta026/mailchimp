@@ -1,4 +1,4 @@
-package com.ttnd.mailchimp;
+package com.ttnd.mailchimp.model;
 
 import java.security.Principal;
 
