@@ -20,7 +20,6 @@ import org.apache.sling.commons.json.JSONObject;
 
 import com.ttnd.mailchimp.Constants;
 import com.ttnd.mailchimp.model.SubscriptionList;
-import com.ttnd.mailchimp.util.JcrHelper;
 
 /**
  * Created by Jatin on 4/6/2016.

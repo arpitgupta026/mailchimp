@@ -1,6 +1,6 @@
 package com.ttnd.mailchimp.servlet;
 
-import com.ttnd.mailchimp.util.JcrHelper;
+import com.ttnd.mailchimp.service.JcrHelper;
 import com.ttnd.mailchimp.util.MailChimpUtil;
 
 import org.apache.felix.scr.annotations.Reference;

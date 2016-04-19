@@ -1,4 +1,35 @@
-package com.ttnd.mailchimp.util;
+package com.ttnd.mailchimp.service.impl;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.felix.scr.annotations.Component;
+import org.apache.felix.scr.annotations.Reference;
+import org.apache.felix.scr.annotations.Service;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.LoginException;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.commons.json.JSONArray;
+import org.apache.sling.commons.json.JSONException;
+import org.apache.sling.commons.json.JSONObject;
+import org.apache.sling.engine.SlingRequestProcessor;
+import org.apache.sling.jcr.api.SlingRepository;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.day.cq.commons.Externalizer;
 import com.day.cq.contentsync.handler.util.RequestResponseFactory;
@@ -11,42 +42,11 @@ import com.day.cq.wcm.api.PageManager;
 import com.day.cq.wcm.api.PageManagerFactory;
 import com.day.cq.wcm.api.WCMMode;
 import com.ttnd.mailchimp.Constants;
-
-import org.apache.felix.scr.annotations.Component;
-import org.apache.felix.scr.annotations.Reference;
-import org.apache.felix.scr.annotations.Service;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.*;
-import org.apache.sling.commons.json.JSONArray;
-import org.apache.sling.commons.json.JSONException;
-import org.apache.sling.commons.json.JSONObject;
-import org.apache.sling.engine.SlingRequestProcessor;
-import org.apache.sling.jcr.api.SlingRepository;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-/**
- * Created by Jatin on 3/30/2016.
- */
+import com.ttnd.mailchimp.service.JcrHelper;
 
 @Component
 @Service(value = JcrHelper.class)
-public class JcrHelper {
-
+public class JcrHelperImpl implements JcrHelper{
     @Reference
     private PageManagerFactory pageManagerFactory;
 
@@ -68,7 +68,7 @@ public class JcrHelper {
 	@Reference
 	private SlingRequestProcessor requestProcessor;
 
-    public ValueMap getConfigFromCloudService(String path){
+	public ValueMap getConfigFromCloudService(String path){
         ValueMap map = null;
         if(path != null && resolverFactory != null && pageManagerFactory != null){
             try {
@@ -226,5 +226,5 @@ public class JcrHelper {
     	    	
     	return html;
     }	
-    
+
 }

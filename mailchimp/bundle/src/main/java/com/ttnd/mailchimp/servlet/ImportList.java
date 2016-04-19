@@ -2,7 +2,7 @@ package com.ttnd.mailchimp.servlet;
 
 import com.day.cq.search.QueryBuilder;
 import com.ttnd.mailchimp.Constants;
-import com.ttnd.mailchimp.util.JcrHelper;
+import com.ttnd.mailchimp.service.JcrHelper;
 
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;

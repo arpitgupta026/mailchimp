@@ -22,7 +22,7 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONException;
 import org.apache.sling.commons.json.JSONObject;
 
-import com.ttnd.mailchimp.util.JcrHelper;
+import com.ttnd.mailchimp.service.JcrHelper;
 import com.ttnd.mailchimp.util.MailChimpUtil;
 
 /**
