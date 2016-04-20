@@ -6,7 +6,7 @@
 
 --%><%
 %><%@include file="/libs/foundation/global.jsp"%><%
-%><%@page session="false" import="com.ttnd.cms.model.SubscribeMailchimp"%><%
+%><%@page session="false" import="com.ttnd.mailchimp.service.SubscribeMailchimp"%><%
 %><%
 	SubscribeMailchimp subscribeMailchimp = sling.getService(SubscribeMailchimp.class);
 %>

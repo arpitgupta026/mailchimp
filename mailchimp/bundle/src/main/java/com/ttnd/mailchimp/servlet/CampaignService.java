@@ -62,7 +62,10 @@ public class CampaignService extends SlingAllMethodsServlet{
                     if(campaignID != null && campaignID.trim().length() > 0){
                         if(map != null){
                             JSONObject responseObj = MailChimpUtil.sendCampaign(map, campaignID);
-                            response.getWriter().write(responseObj.toString());
+                            if(responseObj != null){
+                            	response.getWriter().write(responseObj.toString());
+                            }
+                            
                         }
                     }
                 }else if(("export").equalsIgnoreCase(request.getParameter("action"))){
