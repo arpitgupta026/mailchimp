@@ -83,7 +83,7 @@ public class CampaignService extends SlingAllMethodsServlet{
                                     String subject = campaignConfigMap.get("subject").toString();
                                     String title = campaignConfigMap.get("jcr:title").toString();
                                     String recipientList = campaignConfigMap.get("default-list").toString();
-                                    String onTime = campaignConfigMap.get("onTime").toString();
+                                    //String onTime = campaignConfigMap.get("onTime").toString();
 
                                     JSONObject params = new JSONObject();
                                     params.put("type", "regular");

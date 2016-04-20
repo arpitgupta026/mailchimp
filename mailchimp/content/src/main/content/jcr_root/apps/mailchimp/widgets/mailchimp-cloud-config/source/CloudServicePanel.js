@@ -261,12 +261,23 @@ CQ.cloudservices.MailchimpCloudServicePanel = CQ.Ext.extend(CQ.Ext.Panel, {
     toggleListSelectionBasedOnConfig: function(configs){
         var dlg = this;
         var listSelect = dlg.findById("list-selection");
-        if(listSelect && configs && configs.length > 0){
-            if($.inArray("/etc/cloudservices/mailchimp", configs) > -1){
-                listSelect.show();
-            }else{
-                listSelect.hide();
+        if(listSelect){
+            if(configs && configs.length > 0){
+                for(var k=0; k < configs.length; k++){
+                    if(configs[k].indexOf("/etc/cloudservices/mailchimp") > -1){
+						listSelect.show();
+                        return;
+                    }
+
+                }
+
             }
+            listSelect.reset();
+            listSelect.setOptions("");
+
+			listSelect.doLayout(false, false);
+            listSelect.hide();
+
         }
     },
 
@@ -347,12 +358,23 @@ CQ.cloudservices.MailchimpCloudServicePanel = CQ.Ext.extend(CQ.Ext.Panel, {
                             // remove from the configs so the service appears when listing the services in the dialog
                             var rootPath = field.items.items[0].rootPath;
                             var configs = dlg.data['cq:cloudserviceconfigs'];
-                            if(typeof(configs) == "string") {
+                            if(configs && typeof(configs) == "string") {
                                 configs = [configs];
                             }
-                            var idx = configs.indexOf(rootPath);
-                            configs.splice(idx,1);
-                            dlg.toggleListSelectionBasedOnConfig(configs);
+                            if(configs){
+								var idx;
+                                for(var x=0; x < configs.length ; x++){
+                                    if(configs[x] && configs[x].trim().length > 0 && configs[x].indexOf(rootPath) > -1){
+                                        idx = x;
+                                    }
+                                }
+                                if(idx >= 0){
+                                    configs.splice(idx,1);
+                                }
+                                dlg.data['cq:cloudserviceconfigs'] = configs;
+                                dlg.toggleListSelectionBasedOnConfig(configs);
+                            }    
+
                         }
                     }
                 ]
