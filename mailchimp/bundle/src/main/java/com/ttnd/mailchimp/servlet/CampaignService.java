@@ -61,10 +61,23 @@ public class CampaignService extends SlingAllMethodsServlet{
                     String campaignID = request.getParameter("campaignID");
                     if(campaignID != null && campaignID.trim().length() > 0){
                         if(map != null){
-                            JSONObject responseObj = MailChimpUtil.sendCampaign(map, campaignID);
-                            if(responseObj != null){
-                            	response.getWriter().write(responseObj.toString());
+                        	JSONObject checkListResponseObj = MailChimpUtil.getSendCheckList(map, campaignID);
+                            if(checkListResponseObj != null){
+                            	try{
+                            		boolean isReady = checkListResponseObj.getBoolean("is_ready");
+                            		if(isReady){
+                                		JSONObject responseObj = MailChimpUtil.sendCampaign(map, campaignID);
+                                        if(responseObj != null){
+                                        	response.getWriter().write(responseObj.toString());
+                                        }
+                                	}
+                            	}catch(JSONException je){
+                            		je.printStackTrace();
+                            		response.sendError(500);
+                            	}
+                            	
                             }
+                        	
                             
                         }
                     }

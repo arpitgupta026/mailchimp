@@ -202,5 +202,26 @@ public final class MailChimpUtil {
 		}
 		return jsonResponse;
 	}
+	
+	public static JSONObject getSendCheckList(ValueMap config, String campaignID){
+		JSONObject jsonResponse = null;
+		if(config != null){
+			Object domain = config.get(Constants.METADATA_MAILCHIMP_DOMAIN);
+			Object apikey = config.get(Constants.METADATA_MAILCHIMP_APIKEY);
+			Object username = config.get(Constants.METADATA_MAILCHIMP_USERNAME);
+			if(domain != null && apikey != null && username != null && campaignID != null){
+				String sendCheckListURL = Constants.HTTPS_PROTOCOL + domain.toString() + Constants.API_ENDPOINT + Constants.CAMPAIGN_URL + "/" + campaignID + Constants.SEND_CHECKLIST;
+				try{
+					String response = HttpUtil.getHttpResponse(sendCheckListURL, username.toString(), apikey.toString(), "GET", null);
+					if(response != null){
+						jsonResponse = new JSONObject(response);
+					}
+				}catch(JSONException je){
+					je.printStackTrace();
+				}
+			}
+		}
+		return jsonResponse;
+	}
 
 }
