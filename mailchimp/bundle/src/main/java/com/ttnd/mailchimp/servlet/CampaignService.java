@@ -11,6 +11,7 @@ import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.version.VersionException;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.sling.SlingServlet;
@@ -70,10 +71,12 @@ public class CampaignService extends SlingAllMethodsServlet{
                                         if(responseObj != null){
                                         	response.getWriter().write(responseObj.toString());
                                         }
+                                	}else{
+                                		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                                 	}
                             	}catch(JSONException je){
                             		je.printStackTrace();
-                            		response.sendError(500);
+                            		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                             	}
                             	
                             }
@@ -142,21 +145,22 @@ public class CampaignService extends SlingAllMethodsServlet{
                     	}
                 	}catch(JSONException je){
                 		je.printStackTrace();
+                		response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 	} catch (ValueFormatException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					} catch (VersionException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					} catch (LockException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					} catch (ConstraintViolationException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					} catch (RepositoryException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					}
                 	
                 }

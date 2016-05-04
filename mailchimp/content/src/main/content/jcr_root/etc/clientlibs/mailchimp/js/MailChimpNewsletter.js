@@ -30,15 +30,23 @@ function performAction(ref, action){
                         data: params,
                         dataType: "json",
                         success: function(data){
-                        	if(data && data.title){
-
-                                alert("Newsletter not sent");
-                            }else{
-								alert("Newsletter successfully sent");
-                            }
+                        	if(action=="export"){
+                        		alert("Newsletter created successfully.");	
+                        	}else if(action=="send"){
+                        		alert("Newsletter sent successfully.");
+                        	}else{
+                        		alert("Operation done successfully.");
+                        	}
 						},
                         error:function(data){
-                        	alert("Newsletter successfuly sent");
+                        	if(action=="export"){
+                        		alert("Some issue occured. Newsletter Cannot be created. Please try later");	
+                        	}else if(action=="send"){
+                        		alert("Some issue occured. Newsletter Cannot be sent. Please try later");
+                        	}else{
+                        		alert("Some internal server error occured.");
+                        	}
+                        	
                     	}
                 	});
                 }

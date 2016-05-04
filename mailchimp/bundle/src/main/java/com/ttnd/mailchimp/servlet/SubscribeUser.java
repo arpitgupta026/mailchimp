@@ -13,6 +13,8 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.apache.sling.commons.json.JSONObject;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -51,12 +53,17 @@ public class SubscribeUser extends SlingAllMethodsServlet {
                         if(responseObj != null){
                         	response.getWriter().write(responseObj.toString());
                         }
+                    }else{
+                    	response.sendError(HttpServletResponse.SC_BAD_REQUEST);
                     }
+                }else{
+                	response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 }
             }
 
         }else{
             log.info("ImportListService : MailChimp Configuration Service Not Available");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
